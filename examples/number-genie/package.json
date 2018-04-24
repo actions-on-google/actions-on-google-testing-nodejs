@@ -1,0 +1,24 @@
+{
+    "name": "actions-on-google-testing",
+    "description": "This is an end-to-end testing library for developers building actions",
+    "version": "0.0.1",
+    "private": true,
+    "license": "Apache Version 2.0",
+    "author": "Google Inc.",
+    "engines": {
+        "node": "~6.0"
+    },
+    "scripts": {
+        "test": "./node_modules/.bin/ava -c 1 -s ./test/*.js"
+    },
+    "dependencies": {
+        "ava": "^0.20.0",
+        "chai": "3.5.0",
+        "chai-spies": "^0.7.1",
+        "google-auth-library": "0.12.0",
+        "google-protobuf": "^3.3.0",
+        "mocha": "^3.0.2",
+        "promise.prototype.finally": "3.1.0",
+        "winston": "2.2.0"
+    }
+}
