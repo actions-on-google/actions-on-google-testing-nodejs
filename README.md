@@ -61,9 +61,9 @@ similar to the following:
 
 ```javascript
 'use strict';
-const { ActionsTesting } = require('actions-on-google-testing');
+const { ActionsOnGoogleAva } = require('actions-on-google-testing');
 const { expect } = require('chai');
-const action = new ActionsTesting(require('./test-credentials.json'));
+const action = new ActionsOnGoogleAva(require('./test-credentials.json'));
 
 // Start out with giving a name to this test
 action.startTest('Facts about Google - direct cat path', action => {
