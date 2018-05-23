@@ -2,7 +2,7 @@
     "name": "actions-on-google-testing",
     "description": "This is an end-to-end testing library for developers building actions",
     "version": "0.0.1",
-    "private": true,
+    "private": false,
     "license": "Apache Version 2.0",
     "author": "Google Inc.",
     "engines": {
