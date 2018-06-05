@@ -2,7 +2,6 @@
     "name": "actions-on-google-testing",
     "description": "This is an end-to-end testing library for developers building actions",
     "version": "0.0.1",
-    "private": false,
     "license": "Apache Version 2.0",
     "author": "Google Inc.",
     "engines": {
@@ -11,6 +10,21 @@
     "scripts": {
         "test": "./node_modules/.bin/ava -c 1 -s ./test/*.js"
     },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/actions-on-google/actions-on-google-testing-nodejs.git"
+    },
+    "bugs": {
+        "url": "https://github.com/actions-on-google/actions-on-google-testing-nodejs/issues"
+    },
+    "homepage": "https://github.com/actions-on-google/actions-on-google-testing-nodejs#readme",
+    "keywords": [
+        "google",
+        "google actions",
+        "google assistant",
+        "automated testing",
+        "continuous integration"
+    ],
     "dependencies": {
         "ava": "^0.20.0",
         "chai": "3.5.0",
