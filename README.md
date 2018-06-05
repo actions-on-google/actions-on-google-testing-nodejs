@@ -1,6 +1,8 @@
 # Actions on Google Testing Library
 This library allows developers to write automated testing for their actions in Node.js.
 
+[![NPM Version](https://img.shields.io/npm/v/actions-on-google-testing.svg)](https://www.npmjs.org/package/actions-on-google-testing)
+
 Examples can be found in the `/examples` directory for two sample apps.
 
 The [Assistant SDK](https://developers.google.com/assistant/sdk) is used to give developers
