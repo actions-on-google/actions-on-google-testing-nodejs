@@ -34,19 +34,19 @@ google-oauthlib-tool --scope https://www.googleapis.com/auth/assistant-sdk-proto
           --save --headless --client-secrets /path/to/credentials.json
 ```
 
-1. Copy and paste the URL and enter the authorization code. You will see a response
+9. Copy and paste the URL and enter the authorization code. You will see a response
 similar to the following:
 
 `credentials saved: /path/to/.config/google-oauthlib-tool/credentials.json`
 
-1. Open up this file in a text editor. Take note of the:
+10. Open up this file in a text editor. Take note of the:
 
 * `client_id`
 * `client_secret`
 * `refresh_token`
 
-1. Create a new JSON file: `test-credentials.json`
-1. Enter these properties in that file
+11. Create a new JSON file: `test-credentials.json`
+12. Enter these properties in that file
 
 ```json
 {
@@ -57,7 +57,7 @@ similar to the following:
 }
 ```
 
-1. Create a JavaScript file for your tests: `test.js`
+13. Create a JavaScript file for your tests: `test.js`
 
 ```javascript
 'use strict';
@@ -85,15 +85,15 @@ action.startTest('Facts about Google - direct cat path', action => {
 });
 ```
 
-1. Run `npm install`
-1. Update your `package.json` to add this test file to your test script.
+14. Run `npm install`
+15. Update your `package.json` to add this test file to your test script.
 
 ```JSON
 "scripts": {
     "test": "./node_modules/.bin/ava -c 1 -s ./test.js"
 },
 ```
-1. Run `npm test`. You should see your test be executed.
+16. Run `npm test`. You should see your test be executed.
 
 ## Possible responses
 
