@@ -19,7 +19,7 @@
 'use strict';
 
 const grpc = require('grpc');
-const GoogleAuth = require('google-auth-library');
+const { UserRefreshClient } = require('google-auth-library');
 
 const talk_to = {
     'en-US': 'talk to',
@@ -70,9 +70,8 @@ class ActionsOnGoogle {
     createClient_(credentials) {
         const sslCreds = grpc.credentials.createSsl();
         // https://github.com/google/google-auth-library-nodejs/blob/master/ts/lib/auth/refreshclient.ts
-        const auth = new GoogleAuth();
-        const refresh = new auth.UserRefreshClient();
-        refresh.fromJSON(credentials, function (res) { });
+        const refresh = new UserRefreshClient();
+        refresh.fromJSON(credentials);
 
         const callCreds = grpc.credentials.createFromGoogleCredential(refresh);
         const combinedCreds = grpc.credentials.combineChannelCredentials(sslCreds, callCreds);
