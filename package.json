@@ -30,6 +30,7 @@
         "chai": "3.5.0",
         "chai-spies": "^0.7.1",
         "google-auth-library": "^1.5.0",
+        "google-proto-files": "^0.16.0",
         "google-protobuf": "^3.3.0",
         "grpc": "^1.12.2",
         "mocha": "^3.0.2",

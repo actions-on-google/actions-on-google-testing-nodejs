@@ -19,39 +19,39 @@
 'use strict';
 
 const grpc = require('grpc');
+const path = require('path');
+const protoFiles = require('google-proto-files');
 const { UserRefreshClient } = require('google-auth-library');
 
 const talk_to = {
     'en-US': 'talk to',
     'fr-FR': 'parle avec'
-}
+};
 
 const about = {
     'en-US': ' about',
     'fr-FR': ' de'
-}
+};
 
 const cancel = {
     'en-US': 'cancel',
     'fr-FR': 'annuler'
-}
+};
 
 const my_test_app = {
     'en-US': 'my test app',
     'fr-FR': 'mon application de test'
-}
+};
 
-const PROTO_PATH = __dirname + '/proto/';
-
+const PROTO_ROOT_DIR = protoFiles('..');
 const embedded_assistant_pb = grpc.load({
-    file: '/google/assistant/embedded/v1alpha2/embedded_assistant.proto',
-    root: PROTO_PATH
+    root: PROTO_ROOT_DIR,
+    file: path.relative(PROTO_ROOT_DIR, protoFiles.embeddedAssistant.v1alpha2)
 }).google.assistant.embedded.v1alpha2;
 
-
 const latlng_pb = grpc.load({
-    file: '/google/type/latlng.proto',
-    root: PROTO_PATH
+    root: PROTO_ROOT_DIR,
+    file: path.relative(PROTO_ROOT_DIR, protoFiles.embeddedAssistant.v1alpha2)
 }).google.type.LatLng;
 
 class ActionsOnGoogle {
