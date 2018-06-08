@@ -29,7 +29,7 @@ winston.loggers.add('DEFAULT_LOGGER', {
     }
 });
 
-const ActionsOnGoogleAva = require('../../../actions-on-google-ava');
+const { ActionsOnGoogleAva } = require('../../../dist/');
 const action = new ActionsOnGoogleAva(require('../../../test/test-credentials.json'));
 
 // Start action and ask for history facts until there are no more history facts

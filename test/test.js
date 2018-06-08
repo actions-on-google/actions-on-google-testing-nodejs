@@ -31,7 +31,7 @@ winston.loggers.add('DEFAULT_LOGGER', {
   }
 });
 
-const { ActionsOnGoogleAva } = require('../index');
+const { ActionsOnGoogleAva } = require('../dist');
 const action = new ActionsOnGoogleAva(require('./test-credentials.json'));
 
 action.startTest('TODO Create your own test', action => {

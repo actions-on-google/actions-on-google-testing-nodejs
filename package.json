@@ -4,11 +4,15 @@
     "version": "0.0.2",
     "license": "Apache Version 2.0",
     "author": "Google Inc.",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
     "engines": {
         "node": "~6.0"
     },
     "scripts": {
-        "test": "./node_modules/.bin/ava -c 1 -s ./test/*.js"
+        "lint": "tslint -p .",
+        "build": "tsc",
+        "test": "npm run lint && ./node_modules/.bin/ava -c 1 -s ./test/*.js"
     },
     "repository": {
         "type": "git",
@@ -26,6 +30,7 @@
         "continuous integration"
     ],
     "dependencies": {
+        "@types/promise.prototype.finally": "^2.0.2",
         "ava": "^0.20.0",
         "chai": "3.5.0",
         "chai-spies": "^0.7.1",
@@ -36,5 +41,11 @@
         "mocha": "^3.0.2",
         "promise.prototype.finally": "3.1.0",
         "winston": "2.2.0"
+    },
+    "devDependencies": {
+        "googleapis": "^32.0.0",
+        "tslint": "^5.9.1",
+        "tslint-eslint-rules": "^5.1.0",
+        "typescript": "^2.7.2"
     }
 }

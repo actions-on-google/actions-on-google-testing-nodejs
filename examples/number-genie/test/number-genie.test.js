@@ -29,7 +29,7 @@ winston.loggers.add('DEFAULT_LOGGER', {
     }
 });
 
-const ActionsOnGoogleAva = require('../../../actions-on-google-ava');
+const { ActionsOnGoogleAva } = require('../../../dist/');
 const action = new ActionsOnGoogleAva(require('../../../test/test-credentials.json'));
 
 // Should start action, presetting the answer to fifty. Then guess a few times until the answer is 50.
@@ -86,7 +86,7 @@ action.startTest('Number Genie - starts with invalid number', action => {
 
 // Should start action using the French locale, and confirm the response is also in French
 action.startTest('Number Genie French', action => {
-    action.setLocale('fr-FR');
+    action.locale = 'fr-FR';
     return action.send('parle avec mon application test') // Talk to my test app
         .then(({ displayText, cards }) => {
             expect(displayText[1]).to.be.equal("Quel est votre premier essai ?");
