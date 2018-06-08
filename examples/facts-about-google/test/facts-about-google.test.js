@@ -56,7 +56,6 @@ action.startTest('Facts about Google - history path', action => {
         })
         .then(({ textToSpeech }) => {
             expect(textToSpeech[0]).to.have.string("Looks like you've heard all there is")
-            return action.endTest();
         })
 });
 
@@ -80,7 +79,6 @@ action.startTest('Facts about Google - headquarters path', action => {
         })
         .then(({ textToSpeech }) => {
             expect(textToSpeech[0]).to.have.string("Looks like you've heard all there is")
-            return action.endTest();
         })
 });
 
@@ -92,7 +90,6 @@ action.startTest('Facts about Google - direct cat path', action => {
         })
         .then(({ ssml }) => {
             expect(ssml[0]).to.have.string("Alright, here's a cat fact.")
-            return action.endTest();
         })
 });
 
@@ -121,6 +118,5 @@ action.startTest('Facts about Google - cat path', action => {
         })
         .then(({ ssml }) => {
             expect(ssml[0]).to.have.string("Alright, here's a cat fact.")
-            return action.endTest();
         })
 });

@@ -33,21 +33,25 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
             this._t.plan(1)
             console.log(`** Starting test ${testName} **`)
             callback(this)
+                .then(() => {
+                    // The test has completed successfully
+                    // If the test exits early, only the
+                    // `finally` function will be run
+                    console.log('test passes')
+                    this._t.pass()
+                })
+                .catch((e: Error) => {
+                    console.log('test error', e)
+                })
                 .finally(() => {
                     return this.endConversation()
                         .then((res) => {
-                            console.log('debug: test ends')
+                            console.log('test ends')
                             this._t.end()
                             console.log('\n')
                         })
                 })
         })
-    }
-
-    endTest() {
-        console.log('debug: test passes')
-        this._t.pass()
-        return Promise.resolve()
     }
 
     send(input: string) {

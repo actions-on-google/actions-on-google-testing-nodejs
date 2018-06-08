@@ -56,7 +56,6 @@ action.startTest('Facts about Google - direct cat path', action => {
             // The entire set of responses are listed below.
             // You can use Chai to verify responses.
             expect(ssml[0]).to.have.string("Alright, here's a cat fact.")
-            return action.endTest();
         })
 });
 ```
@@ -120,8 +119,8 @@ res
 
 You can run a few different types of automated test scenarios.
 
-* `action.setLocation([latitude, longitude]);`
-* `action.setLocale('en-US'); // Or any other supported locale`
+* `action.location = [latitude, longitude];`
+* `action.locale = 'en-US'; // Or any other supported locale`
 
 ## Known Issues
 

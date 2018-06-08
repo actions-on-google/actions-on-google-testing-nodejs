@@ -61,8 +61,6 @@ action.startTest('Number Genie - should guess the right answer', action => {
                 "Hey, should we do that again?"]);
             expect(cards[0].imageAltText).to.be.equal('celebrating genie');
             expect(cards[0].imageUrl).to.have.string('/images/WIN.gif');
-
-            return action.endTest();
         });
 });
 
@@ -79,8 +77,6 @@ action.startTest('Number Genie - starts with invalid number', action => {
 
             expect(cards[0].imageAltText).to.be.equal('cold genie');
             expect(cards[0].imageUrl).to.have.string('/images/COLD.gif');
-
-            return action.endTest();
         });
 });
 
@@ -94,8 +90,5 @@ action.startTest('Number Genie French', action => {
             expect(cards[0].imageAltText).to.be.equal('Boule de crystal mystique');
             expect(cards[0].imageUrl).to.have.string('/images/INTRO.gif');
             return action.send('annuler'); // Cancel
-        })
-        .then((res) => {
-            return action.endTest();
         });
 });
