@@ -113,6 +113,11 @@ res
   .linkOutSuggestion
     .url - String
     .name - String
+  .table
+    .headers - String[]
+    .rows - Row[]
+      .cells - String[]
+      .divider - Boolean
 ```
 
 ## Additional features

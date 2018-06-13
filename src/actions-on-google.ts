@@ -63,6 +63,15 @@ interface AogSuggestion {
     title: string
 }
 
+interface AogOptionInfo {
+    key: string,
+    synonyms: string[]
+}
+
+interface AogTableCell {
+    text: string
+}
+
 export interface UserCredentials {
     client_id: string,
     client_secret: string,
@@ -91,7 +100,13 @@ export interface AssistResponseList {
         description: string,
         imageUrl: string,
         imageAltText: string,
+        optionInfo: AogOptionInfo,
     }[],
+}
+
+export interface AssistResponseTableRow {
+    cells: string[],
+    divider: boolean,
 }
 
 export interface AssistResponse {
@@ -107,6 +122,7 @@ export interface AssistResponse {
         imageAltText: string,
         footer?: string
         url?: string,
+        optionInfo?: AogOptionInfo,
     }[],
     list?: AssistResponseList,
     mediaResponse?: {
@@ -120,6 +136,10 @@ export interface AssistResponse {
     linkOutSuggestion?: {
         url: string,
         name: string,
+    }
+    table?: {
+        headers: string[],
+        rows: AssistResponseTableRow[],
     }
     deviceAction?: string
 }
@@ -246,6 +266,45 @@ export class ActionsOnGoogle {
                         debugInfo.finalResponse.richResponse
                     assistResponse.micOpen = debugInfo.expectUserResponse
 
+                    // Process a carouselSelect or listSelect
+                    const possibleIntents = debugInfo.expectedInputs[0].possibleIntents
+                    if (possibleIntents) {
+                        const possibleIntent = possibleIntents[0]
+                        const inputValueData = possibleIntent.inputValueData
+                        if (inputValueData) {
+                            const carouselSelect = inputValueData.carouselSelect
+                            const listSelect = inputValueData.listSelect
+                            if (carouselSelect) {
+                                assistResponse.carousel = []
+                                for (const item of carouselSelect.items) {
+                                    assistResponse.carousel.push({
+                                        optionInfo: item.optionInfo,
+                                        title: item.title,
+                                        description: item.description,
+                                        imageUrl: item.image.url,
+                                        imageAltText: item.image.accessibilityText,
+                                    })
+                                }
+                            }
+                            if (listSelect) {
+                                assistResponse.list = {
+                                    title: listSelect.title,
+                                    items: [],
+                                }
+                                for (const item of listSelect.items) {
+                                    assistResponse.list.items.push({
+                                        optionInfo: item.optionInfo,
+                                        title: item.title,
+                                        description: item.description,
+                                        imageUrl: item.image.url,
+                                        imageAltText: item.image.accessibilityText,
+                                    })
+                                }
+                            }
+                        }
+                    }
+
+                    // Process other response types
                     // tslint:disable-next-line
                     actionResponse.items.forEach((i: any) => {
                         if (i.simpleResponse) {
@@ -279,7 +338,7 @@ export class ActionsOnGoogle {
                             assistResponse.cards.push(card)
                         } else if (i.carouselBrowse) {
                             assistResponse.carousel = []
-                            for (const item of i.carouselBrowse) {
+                            for (const item of i.carouselBrowse.items) {
                                 assistResponse.carousel.push({
                                     title: item.title,
                                     description: item.description,
@@ -289,30 +348,6 @@ export class ActionsOnGoogle {
                                     url: item.openUrlAction.url,
                                 })
                             }
-                        } else if (i.carouselSelect) {
-                            assistResponse.carousel = []
-                            for (const item of i.carouselSelect) {
-                                assistResponse.carousel.push({
-                                    title: item.title,
-                                    description: item.description,
-                                    imageUrl: item.image.url,
-                                    imageAltText: item.image.accessibilityText,
-                                })
-                            }
-                        } else if (i.listSelect) {
-                            assistResponse.list = {
-                                title: '',
-                                items: [],
-                            }
-                            assistResponse.list.title = i.listSelect.title
-                            for (const item of i.listSelect.items) {
-                                assistResponse.list.items.push({
-                                    title: item.title,
-                                    description: item.description,
-                                    imageUrl: item.image.url,
-                                    imageAltText: item.image.accessibilityText,
-                                })
-                            }
                         } else if (i.mediaResponse) {
                             assistResponse.mediaResponse = {
                                 type: i.mediaResponse.mediaType,
@@ -320,6 +355,24 @@ export class ActionsOnGoogle {
                                 description: i.mediaResponse.mediaObjects[0].description,
                                 sourceUrl: i.mediaResponse.mediaObjects[0].contentUrl,
                                 icon: i.mediaResponse.mediaObjects[0].icon.url,
+                            }
+                        } else if (i.tableCard) {
+                            assistResponse.table = {
+                                headers: [],
+                                rows: [],
+                            }
+                            for (const property of i.tableCard.columnProperties) {
+                                assistResponse.table.headers.push(property.header)
+                            }
+                            for (const row of i.tableCard.rows) {
+                                const rowData: AssistResponseTableRow = {
+                                    cells: [],
+                                    divider: row.dividerAfter,
+                                }
+                                for (const cell of row.cells) {
+                                    rowData.cells.push((cell as AogTableCell).text)
+                                }
+                                assistResponse.table.rows.push(rowData)
                             }
                         }
                     })
