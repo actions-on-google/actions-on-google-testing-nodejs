@@ -12,7 +12,7 @@
     "scripts": {
         "lint": "tslint -p .",
         "build": "tsc && cp -r ./locales ./dist",
-        "test": "npm run lint && ./node_modules/.bin/ava -c 1 -s ./test/*.js"
+        "test": "npm run build && npm run lint && nyc ava --fail-fast dist/test/test.js"
     },
     "repository": {
         "type": "git",
@@ -35,6 +35,7 @@
         "ava": "^0.20.0",
         "chai": "3.5.0",
         "chai-spies": "^0.7.1",
+        "googleapis": "^32.0.0",
         "google-auth-library": "^1.5.0",
         "google-proto-files": "^0.16.0",
         "google-protobuf": "^3.3.0",
@@ -45,7 +46,11 @@
         "winston": "2.2.0"
     },
     "devDependencies": {
-        "googleapis": "^32.0.0",
+        "@types/chai": "^4.1.3",
+        "@types/sinon": "^5.0.1",
+        "@types/winston": "^2.3.9",
+        "nyc": "^11.6.0",
+        "sinon": "^6.0.0",
         "tslint": "^5.9.1",
         "tslint-eslint-rules": "^5.1.0",
         "typescript": "^2.7.2"
