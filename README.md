@@ -60,7 +60,7 @@ action.startTest('Facts about Google - direct cat path', action => {
 });
 ```
 
-10. Run `npm install`
+10. Run `yarn`
 11. Update your `package.json` to add this test file to your test script.
 
 ```JSON
@@ -68,7 +68,7 @@ action.startTest('Facts about Google - direct cat path', action => {
     "test": "./node_modules/.bin/ava -c 1 -s ./test.js"
 },
 ```
-12. Run `npm test`. You should see your test be executed.
+12. Run `yarn test`. You should see your test be executed.
 
 ## Possible responses
 
