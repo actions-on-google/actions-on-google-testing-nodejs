@@ -158,7 +158,7 @@ class ActionsOnGoogle {
                 }
                 if (data.debug_info) {
                     const debugInfo = JSON.parse(data.debug_info.aog_agent_to_assistant_json);
-                    const actionResponse = debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt ||
+                    const actionResponse = debugInfo.expectedInputs && debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt ||
                         debugInfo.finalResponse.richResponse;
                     assistResponse.micOpen = debugInfo.expectUserResponse;
                     assistResponse.textToSpeech = [];
