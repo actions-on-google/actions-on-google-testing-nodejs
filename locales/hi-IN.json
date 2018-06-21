@@ -1,0 +1,6 @@
+{
+  "cancel": "cancel",
+  "my_test_app": "मेरा टेस्ट ऐप",
+  "start_conversation": "{{app_name}} से कनेक्ट करो",
+  "start_conversation_with_prompt": "{{app_name}} से पूछो {{prompt}}"
+}

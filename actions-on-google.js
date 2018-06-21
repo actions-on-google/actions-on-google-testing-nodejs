@@ -24,13 +24,27 @@ const protoFiles = require('google-proto-files');
 const { UserRefreshClient } = require('google-auth-library');
 const i18n = require('i18n');
 
-const SUPPORTED_LOCALES = ['en-US', 'fr-FR', 'ja-JP'];
+const SUPPORTED_LOCALES = [
+    'en-US', 'fr-FR', 'ja-JP', 'de-DE', 'ko-KR',
+    'es-ES', 'pt-BR', 'it-IT', 'ru-RU', 'hi-IN',
+    'th-TH', 'id-ID', 'da-DK', 'no-NO', 'nl-NL',
+    'sv-SE'
+];
+const FALLBACK_LOCALES = {
+    'en-GB': 'en-US',
+    'en-AU': 'en-US',
+    'en-SG': 'en-US',
+    'en-CA': 'en-US',
+    'fr-CA': 'fr-FR',
+    'es-419': 'es-ES'
+};
 const DEFAULT_LOCALE = SUPPORTED_LOCALES[0];
 
 i18n.configure({
-  locales: SUPPORTED_LOCALES,
-  directory: __dirname + '/locales',
-  defaultLocale: DEFAULT_LOCALE
+    locales: SUPPORTED_LOCALES,
+    fallbacks: FALLBACK_LOCALES,
+    directory: __dirname + '/locales',
+    defaultLocale: DEFAULT_LOCALE
 });
 
 const PROTO_ROOT_DIR = protoFiles('..');
@@ -71,7 +85,7 @@ class ActionsOnGoogle {
     }
 
     setLocale(locale) {
-        if (!SUPPORTED_LOCALES.includes(locale)) {
+        if (!SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).includes(locale)) {
             throw new Error(`Unsupported locale: ${locale}`);
         }
         this.locale = locale;
