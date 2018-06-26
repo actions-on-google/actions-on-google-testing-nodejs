@@ -1,0 +1,6 @@
+{
+  "cancel": "annuler",
+  "my_test_app": "mon application test",
+  "start_conversation": "Parler avec {{app_name}}",
+  "start_conversation_with_prompt": "Parle avec {{app_name}} {{prompt}}"
+}

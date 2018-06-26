@@ -20,31 +20,32 @@ const grpc = require('grpc')
 const protoFiles = require('google-proto-files')
 import * as path from 'path'
 import { UserRefreshClient } from 'google-auth-library'
+import * as i18n from 'i18n'
 
-interface Phrases {
-    talkTo: string,
-    about: string,
-    cancel: string,
-    myTestApp: string
+const SUPPORTED_LOCALES = [
+    'en-US', 'fr-FR', 'ja-JP', 'de-DE', 'ko-KR',
+    'es-ES', 'pt-BR', 'it-IT', 'ru-RU', 'hi-IN',
+    'th-TH', 'id-ID', 'da-DK', 'no-NO', 'nl-NL',
+    'sv-SE',
+]
+
+const FALLBACK_LOCALES = {
+    'en-GB': 'en-US',
+    'en-AU': 'en-US',
+    'en-SG': 'en-US',
+    'en-CA': 'en-US',
+    'fr-CA': 'fr-FR',
+    'es-419': 'es-ES',
 }
 
-const phrasesEnUs: Phrases = {
-    talkTo: 'talk to',
-    about: ' about',
-    cancel: 'cancel',
-    myTestApp: 'my test app',
-}
+const DEFAULT_LOCALE = SUPPORTED_LOCALES[0]
 
-const phrasesFrFr: Phrases = {
-    talkTo: 'parle avec',
-    about: ' de',
-    cancel: 'annulez',
-    myTestApp: 'mon application de test',
-}
-
-const phrasesMap: Map<string, Phrases> = new Map()
-phrasesMap.set('en-US', phrasesEnUs)
-phrasesMap.set('fr-FR', phrasesFrFr)
+i18n.configure({
+    locales: SUPPORTED_LOCALES,
+    fallbacks: FALLBACK_LOCALES,
+    directory: __dirname + '/locales',
+    defaultLocale: DEFAULT_LOCALE,
+})
 
 const PROTO_ROOT_DIR = protoFiles('..')
 const embeddedAssistantPb = grpc.load({
@@ -131,12 +132,12 @@ export class ActionsOnGoogle {
     _isNewConversation = false
 
     location: number[]
-    locale = 'en-US'
     deviceModelId = 'default'
     deviceInstanceId = 'default'
 
     constructor(credentials: UserCredentials) {
         this._client = this._createClient(credentials)
+        this.locale = DEFAULT_LOCALE
     }
 
     _createClient(credentials: UserCredentials) {
@@ -151,31 +152,35 @@ export class ActionsOnGoogle {
         return client
     }
 
-    startConversation(prompt: string) {
-        if (!phrasesMap.get(this.locale)) {
-            console.error('Locale does not have pre-defined strings')
-            return
+    set locale(l: string) {
+        if (!SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).includes(l)) {
+            console.warn(`Warning: Unsupported locale '${l}' in this tool. Ignore.`)
         }
-        return this.startConversationWith(phrasesMap.get(this.locale)!.myTestApp, prompt)
+        this.locale = l
+        i18n.setLocale(l)
+    }
+
+    i18n_(name, params?) {
+        if (params) {
+            return i18n.__(name, params)
+        } else {
+            return i18n.__(name)
+        }
+    }
+
+    startConversation(prompt: string) {
+        return this.startConversationWith(this.i18n_('my_test_app'), prompt)
     }
 
     startConversationWith(action: string, prompt: string) {
-        if (!phrasesMap.get(this.locale)) {
-            console.error('Locale does not have pre-defined strings')
-            return
-        }
-        let query = `${phrasesMap.get(this.locale)!.talkTo} ${action}`
-        if (prompt) {
-            query += `${phrasesMap.get(this.locale)!.about} ${prompt}`
-        }
+        const query = prompt
+            ? this.i18n_('start_conversation_with_prompt', { app_name: action, prompt })
+            : this.i18n_('start_conversation', { app_name: action })
         return this.send(query)
     }
 
     endConversation() {
-        if (!phrasesMap.get(this.locale)) {
-            return this.send(phrasesMap.get('en-US')!.cancel)
-        }
-        return this.send(phrasesMap.get(this.locale)!.cancel)
+        return this.send(this.i18n_('cancel'))
     }
 
     send(input: string) {
