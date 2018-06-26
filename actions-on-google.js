@@ -98,7 +98,7 @@ class ActionsOnGoogle {
         } else {
             return i18n.__(name);
         }
-    };
+    }
 
     setLocation(latLngArray) {
         this.location = latLngArray;
