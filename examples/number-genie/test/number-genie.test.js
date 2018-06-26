@@ -34,7 +34,7 @@ const action = new ActionsOnGoogleAva(require('../../../test/test-credentials.js
 
 // Should start action, presetting the answer to fifty. Then guess a few times until the answer is 50.
 action.startTest('Number Genie - should guess the right answer', action => {
-    return action.startConversation('50')
+    return action.startConversation('about 50')
         .then(({ displayText, cards }) => {
             expect(displayText[0]).to.have.string("I'm thinking of a number from 0 to 100.");
             expect(displayText[1]).to.be.equal("What's your first guess?");
@@ -68,7 +68,7 @@ action.startTest('Number Genie - should guess the right answer', action => {
 
 // Should start action, presetting the answer to a number higher than the range 0-100
 action.startTest('Number Genie - starts with invalid number', action => {
-    return action.startConversation('250')
+    return action.startConversation('about 250')
         .then(({ displayText }) => {
             expect(displayText[0]).to.have.string("Woah there! I can't use that number.");
             expect(displayText[1]).to.be.equal("What's your first guess?");

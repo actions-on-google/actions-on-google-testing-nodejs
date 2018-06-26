@@ -22,26 +22,30 @@ const grpc = require('grpc');
 const path = require('path');
 const protoFiles = require('google-proto-files');
 const { UserRefreshClient } = require('google-auth-library');
+const i18n = require('i18n');
 
-const talk_to = {
-    'en-US': 'talk to',
-    'fr-FR': 'parle avec'
+const SUPPORTED_LOCALES = [
+    'en-US', 'fr-FR', 'ja-JP', 'de-DE', 'ko-KR',
+    'es-ES', 'pt-BR', 'it-IT', 'ru-RU', 'hi-IN',
+    'th-TH', 'id-ID', 'da-DK', 'no-NO', 'nl-NL',
+    'sv-SE'
+];
+const FALLBACK_LOCALES = {
+    'en-GB': 'en-US',
+    'en-AU': 'en-US',
+    'en-SG': 'en-US',
+    'en-CA': 'en-US',
+    'fr-CA': 'fr-FR',
+    'es-419': 'es-ES'
 };
+const DEFAULT_LOCALE = SUPPORTED_LOCALES[0];
 
-const about = {
-    'en-US': ' about',
-    'fr-FR': ' de'
-};
-
-const cancel = {
-    'en-US': 'cancel',
-    'fr-FR': 'annuler'
-};
-
-const my_test_app = {
-    'en-US': 'my test app',
-    'fr-FR': 'mon application de test'
-};
+i18n.configure({
+    locales: SUPPORTED_LOCALES,
+    fallbacks: FALLBACK_LOCALES,
+    directory: __dirname + '/locales',
+    defaultLocale: DEFAULT_LOCALE
+});
 
 const PROTO_ROOT_DIR = protoFiles('..');
 const embedded_assistant_pb = grpc.load({
@@ -59,8 +63,8 @@ class ActionsOnGoogle {
         ActionsOnGoogle.prototype.endpoint_ = "embeddedassistant.googleapis.com";
 
         this.client = this.createClient_(credentials);
-        this.locale = "en-US";
-        this.location = undefined
+        this.setLocale(DEFAULT_LOCALE);
+        this.location = undefined;
         this.deviceModelId = 'default';
         this.deviceInstanceId = 'default';
         this.conversationState = null;
@@ -81,7 +85,19 @@ class ActionsOnGoogle {
     }
 
     setLocale(locale) {
+        if (!SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).includes(locale)) {
+            console.warn(`Warning: Unsupported locale '${locale}' in this tool. Ignore.`);
+        }
         this.locale = locale;
+        i18n.setLocale(locale);
+    }
+
+    i18n_(name, params) {
+        if (params) {
+            return i18n.__(name, params);
+        } else {
+            return i18n.__(name);
+        }
     }
 
     setLocation(latLngArray) {
@@ -94,19 +110,18 @@ class ActionsOnGoogle {
     }
 
     startConversation(prompt) {
-        return this.startConversationWith(my_test_app[this.locale], prompt);
+        return this.startConversationWith(this.i18n_('my_test_app'), prompt);
     }
 
     startConversationWith(appName, prompt) {
-        let query = `${talk_to[this.locale]} ${appName}`;
-        if (prompt) {
-            query += `${about[this.locale]} ${prompt}`;
-        }
+        const query = prompt
+          ? this.i18n_('start_conversation_with_prompt', {app_name: appName, prompt: prompt})
+          : this.i18n_('start_conversation', {app_name: appName});
         return this.send(query);
     }
 
     endConversation() {
-        return this.send(cancel[this.locale]);
+        return this.send(this.i18n_('cancel'));
     }
 
     send(input) {
