@@ -72,6 +72,93 @@ interface AogTableCell {
     text: string
 }
 
+interface JsonObject {
+    // tslint:disable-next-line:no-any support unused fields
+    [key: string]: any
+}
+
+interface AssistantSdkResponse extends JsonObject {
+    dialog_state_out?: {
+        conversation_state: Uint8Array,
+        supplemental_display_text: string,
+    },
+    device_action?: {
+        device_request_json: string,
+    },
+    debug_info?: {
+        aog_agent_to_assistant_json: string,
+    }
+}
+
+interface ActionResponseItem extends JsonObject {
+    simpleResponse?: {
+        textToSpeech?: string,
+        displayText?: string,
+        ssml?: string,
+    }
+    basicCard?: {
+        title?: string,
+        subtitle?: string,
+        formattedText?: string,
+        image?: {
+            url?: string,
+            accessibilityText?: string,
+        },
+        buttons?: {
+            title?: string,
+            openUrlAction?: {
+                url?: string,
+            },
+        }[],
+    },
+    carouselBrowse?: {
+        items: {
+            title?: string,
+            description?: string,
+            footer?: string,
+            image?: {
+                url?: string,
+                accessibilityText?: string,
+            },
+            openUrlAction?: {
+                url?: string,
+            },
+        }[],
+    },
+    carouselSelect?: {
+        items: {
+            title?: string,
+            description?: string,
+            image?: {
+                url?: string,
+                accessibilityText?: string,
+            },
+        }[],
+    },
+    listSelect?: {
+        title?: string,
+        items: {
+            title?: string,
+            description?: string,
+            image?: {
+                url?: string,
+                accessibilityText?: string,
+            },
+        }[],
+    },
+    mediaResponse?: {
+        mediaType: string,
+        mediaObjects: {
+            name: string,
+            description: string,
+            contentUrl: string,
+            icon: {
+                url: string,
+            },
+        }[],
+    }
+}
+
 export interface UserCredentials {
     client_id: string,
     client_secret: string,
@@ -94,13 +181,13 @@ export interface AssistResponseCard {
 }
 
 export interface AssistResponseList {
-    title: string,
+    title?: string,
     items: {
-        title: string,
-        description: string,
-        imageUrl: string,
-        imageAltText: string,
-        optionInfo: AogOptionInfo,
+        title?: string,
+        description?: string,
+        imageUrl?: string,
+        imageAltText?: string,
+        optionInfo?: AogOptionInfo,
     }[],
 }
 
@@ -116,10 +203,10 @@ export interface AssistResponse {
     ssml: string[],
     cards?: AssistResponseCard[]
     carousel?: {
-        title: string,
+        title?: string,
         description?: string,
-        imageUrl: string,
-        imageAltText: string,
+        imageUrl?: string,
+        imageAltText?: string,
         footer?: string
         url?: string,
         optionInfo?: AogOptionInfo,
@@ -246,8 +333,7 @@ export class ActionsOnGoogle {
                 suggestions: [],
             }
 
-            // tslint:disable-next-line
-            conversation.on('data', (data: any) => {
+            conversation.on('data', (data: AssistantSdkResponse) => {
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
                     if (data.dialog_state_out.supplemental_display_text &&
@@ -306,7 +392,7 @@ export class ActionsOnGoogle {
 
                     // Process other response types
                     // tslint:disable-next-line
-                    actionResponse.items.forEach((i: any) => {
+                    actionResponse.items.forEach((i: ActionResponseItem) => {
                         if (i.simpleResponse) {
                             if (i.simpleResponse.textToSpeech) {
                                 assistResponse.textToSpeech.push(i.simpleResponse.textToSpeech)
@@ -323,15 +409,18 @@ export class ActionsOnGoogle {
                                 title: i.basicCard.title,
                                 subtitle: i.basicCard.subtitle,
                                 text: i.basicCard.formattedText,
-                                imageUrl: i.basicCard.image.url,
-                                imageAltText: i.basicCard.image.accessibilityText,
+                                imageUrl: i.basicCard.image
+                                    ? i.basicCard.image.url : undefined,
+                                imageAltText: i.basicCard.image
+                                    ? i.basicCard.image.accessibilityText : undefined,
                                 buttons: [],
                             }
                             if (i.basicCard.buttons) {
                                 for (const button of i.basicCard.buttons) {
                                     card.buttons.push({
                                         title: button.title,
-                                        url: button.openUrlAction.url,
+                                        url: button.openUrlAction
+                                            ? button.openUrlAction.url : undefined,
                                     } as AssistResponseButton)
                                 }
                             }
@@ -343,9 +432,10 @@ export class ActionsOnGoogle {
                                     title: item.title,
                                     description: item.description,
                                     footer: item.footer,
-                                    imageUrl: item.image.url,
-                                    imageAltText: item.image.accessibilityText,
-                                    url: item.openUrlAction.url,
+                                    imageUrl: item.image ? item.image.url : undefined,
+                                    imageAltText: item.image
+                                        ? item.image.accessibilityText : undefined,
+                                    url: item.openUrlAction ? item.openUrlAction.url : undefined,
                                 })
                             }
                         } else if (i.mediaResponse) {
