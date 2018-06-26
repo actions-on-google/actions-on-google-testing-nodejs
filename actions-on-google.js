@@ -86,7 +86,7 @@ class ActionsOnGoogle {
 
     setLocale(locale) {
         if (!SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).includes(locale)) {
-            throw new Error(`Unsupported locale: ${locale}`);
+            console.warn(`Warning: Unsupported locale '${locale}' in this tool. Ignore.`);
         }
         this.locale = locale;
         i18n.setLocale(locale);
