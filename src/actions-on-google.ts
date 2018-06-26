@@ -348,12 +348,14 @@ export class ActionsOnGoogle {
                 if (data.debug_info) {
                     const debugInfo = JSON.parse(data.debug_info.aog_agent_to_assistant_json)
                     const actionResponse =
-                        debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt ||
-                        debugInfo.finalResponse.richResponse
-                    assistResponse.micOpen = debugInfo.expectUserResponse
+                        debugInfo.expectedInputs ?
+                            debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt :
+                            debugInfo.finalResponse.richResponse
+                    assistResponse.micOpen = !!debugInfo.expectUserResponse
 
                     // Process a carouselSelect or listSelect
-                    const possibleIntents = debugInfo.expectedInputs[0].possibleIntents
+                    const possibleIntents = debugInfo.expectedInputs ?
+                        debugInfo.expectedInputs[0].possibleIntents : undefined
                     if (possibleIntents) {
                         const possibleIntent = possibleIntents[0]
                         const inputValueData = possibleIntent.inputValueData

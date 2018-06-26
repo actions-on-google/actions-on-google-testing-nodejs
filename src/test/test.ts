@@ -53,7 +53,7 @@ const getMockConversation = (data: any) => {
       }
     },
     // tslint:disable-next-line
-    write: (data: any) => {},
+    write: (data: any) => { },
     end() {
       onData(dataToSend)
       onEnd()
@@ -77,7 +77,7 @@ test.serial('sends correct request parameters - en-US', t => {
       },
       // tslint:disable-next-line
       write: (data: any) => {
-        t.is(data.config.text_query, 'talk to my test app')
+        t.is(data.config.text_query, 'Talk to my test app')
         t.is(data.config.dialog_state_in.language_code, 'en-US')
         t.is(data.config.debug_config.return_debug_info, true)
       },
@@ -88,7 +88,7 @@ test.serial('sends correct request parameters - en-US', t => {
     }
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then(res => {
       t.pass()
       mockResponse.restore()
@@ -112,7 +112,7 @@ test.serial('sends correct request parameters - fr-FR', t => {
       },
       // tslint:disable-next-line
       write: (data: any) => {
-        t.is(data.config.text_query, 'parle avec mon application de test')
+        t.is(data.config.text_query, 'Parler avec mon application test')
         t.is(data.config.dialog_state_in.language_code, 'fr-FR')
         t.is(data.config.debug_config.return_debug_info, true)
       },
@@ -123,11 +123,11 @@ test.serial('sends correct request parameters - fr-FR', t => {
     }
   })
 
-  action.locale = 'fr-FR'
-  return action.startConversation()
+  action.setLocale('fr-FR')
+  return action.startConversation('')
     .then(res => {
       t.pass()
-      action.locale = 'en-US'
+      action.setLocale('en-US')
       mockResponse.restore()
     })
 })
@@ -140,9 +140,27 @@ test.serial('opens and exits action', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       t.deepEqual(res, Sample.NUMBER_GENIE_WELCOME_VALUES)
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies parsing closing response of conversation', t => {
+  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.NUMBER_GENIE_EXIT)
+    return conversation
+  })
+
+  return action.startConversation('')
+    .then((res: AssistResponse) => {
+      t.is(res.textToSpeech[0],
+        '<speak>OK, I\'m already thinking of a number for next time.</speak>')
+      t.is(res.displayText[0], 'OK, I\'m already thinking of a number for next time.')
+      t.is(res.micOpen, false)
       mockResponse.restore()
     })
 })
@@ -155,7 +173,7 @@ test.serial('verifies parsing textToSpeech, displayText, suggestions', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       t.is(res.textToSpeech[0], 'Hi there!')
       t.is(res.textToSpeech[1], 'I can show you basic cards, lists and carousels as well as ' +
@@ -177,7 +195,7 @@ test.serial('verifies parsing basic cards', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       const basicCard = res.cards![0]
       t.is(basicCard.title, 'Title: this is a title')
@@ -204,7 +222,7 @@ test.serial('verifies parsing a browse carousel', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       const firstItem = res.carousel![0]
       const secondItem = res.carousel![1]
@@ -228,7 +246,7 @@ test.serial('verifies parsing a carousel', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       const firstItem = res.carousel![0]
       t.is(res.carousel!.length, 4)
@@ -252,12 +270,12 @@ test.serial('verifies parsing a carousel', t => {
 
 test.serial('verifies parsing a list', t => {
   const action = new ActionsOnGoogleAva(require(testCredentialsFile))
-  const mockResponse = sinon.stub(action._client, 'assist');  mockResponse.callsFake(() => {
+  const mockResponse = sinon.stub(action._client, 'assist'); mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_LIST)
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       const firstItem = res.list!.items[0]
       t.is(res.list!.items.length, 4)
@@ -287,7 +305,7 @@ test.serial('verifies parsing a media response', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       t.is(res.mediaResponse!.type, 'AUDIO')
       t.is(res.mediaResponse!.name, 'Jazz in Paris')
@@ -308,7 +326,7 @@ test.serial('verifies parsing a linkout suggestion', t => {
     return conversation
   })
 
-  return action.startConversation()
+  return action.startConversation('')
     .then((res: AssistResponse) => {
       t.is(res.linkOutSuggestion!.url, 'https://assistant.google.com/')
       t.is(res.linkOutSuggestion!.name, 'Suggestion Link')
@@ -324,7 +342,7 @@ test.serial('verifies parsing a table', t => {
     return conversation
   })
 
-  return action!.startConversation()
+  return action!.startConversation('')
     .then((res: AssistResponse) => {
       t.deepEqual(res.table!.headers, ['header 1', 'header 2', 'header 3'])
       t.deepEqual(res.table!.rows[0].cells, ['row 1 item 1', 'row 1 item 2', 'row 1 item 3'])

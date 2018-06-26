@@ -16,75 +16,75 @@
 
 /* tslint:disable max-line-length */
 export const NUMBER_GENIE_WELCOME_AOG = {
-    conversationToken: '[\"_actions_on_google\",\"game\"]',
-    expectUserResponse: true,
-    expectedInputs: [
-      {
-        inputPrompt: {
-          richInitialPrompt: {
-            items: [
-              {
-                simpleResponse: {
-                  textToSpeech: '<speak>Hi! I\'m thinking of a number from 0 to 100.</speak>',
-                  displayText: 'Hi! I\'m thinking of a number from 0 to 100.',
+  conversationToken: '[\"_actions_on_google\",\"game\"]',
+  expectUserResponse: true,
+  expectedInputs: [
+    {
+      inputPrompt: {
+        richInitialPrompt: {
+          items: [
+            {
+              simpleResponse: {
+                textToSpeech: '<speak>Hi! I\'m thinking of a number from 0 to 100.</speak>',
+                displayText: 'Hi! I\'m thinking of a number from 0 to 100.',
+              },
+            },
+            {
+              simpleResponse: {
+                textToSpeech: '<speak>What\'s your first guess?</speak>',
+                displayText: 'What\'s your first guess?',
+              },
+            },
+            {
+              basicCard: {
+                formattedText: 'Few have cracked this one on the first try',
+                image: {
+                  url: 'https://project-id.firebaseapp.com/images/INTRO.gif',
+                  accessibilityText: 'mystical crystal ball',
                 },
               },
-              {
-                simpleResponse: {
-                  textToSpeech: '<speak>What\'s your first guess?</speak>',
-                  displayText: 'What\'s your first guess?',
-                },
-              },
-              {
-                basicCard: {
-                  formattedText: 'Few have cracked this one on the first try',
-                  image: {
-                    url: 'https://project-id.firebaseapp.com/images/INTRO.gif',
-                    accessibilityText: 'mystical crystal ball',
-                  },
-                },
-              },
-            ],
-            suggestions: [
-              {
-                title: '37',
-              },
-              {
-                title: '10',
-              },
-              {
-                title: '78',
-              },
-              {
-                title: '34',
-              },
-            ],
-          },
+            },
+          ],
+          suggestions: [
+            {
+              title: '37',
+            },
+            {
+              title: '10',
+            },
+            {
+              title: '78',
+            },
+            {
+              title: '34',
+            },
+          ],
         },
-        possibleIntents: [
-          {
-            intent: 'assistant.intent.action.TEXT',
-          },
-          {
-            intent: '1e46ffc2-651f-4ac0-a54e-9698feb88880',
-          },
-          {
-            intent: '19a87eed-4b5f-4aed-b771-bc9f2313cad2',
-          },
-        ],
       },
-    ],
-    responseMetadata: {
-      status: {
-        message: 'Success (200)',
-      },
-      queryMatchInfo: {
-        queryMatched: true,
-        intent: '56da4637-0419-46b2-b851-d7bf726b1b1b',
-      },
+      possibleIntents: [
+        {
+          intent: 'assistant.intent.action.TEXT',
+        },
+        {
+          intent: '1e46ffc2-651f-4ac0-a54e-9698feb88880',
+        },
+        {
+          intent: '19a87eed-4b5f-4aed-b771-bc9f2313cad2',
+        },
+      ],
     },
-    userStorage: '{\"data\":{}}',
-  }
+  ],
+  responseMetadata: {
+    status: {
+      message: 'Success (200)',
+    },
+    queryMatchInfo: {
+      queryMatched: true,
+      intent: '56da4637-0419-46b2-b851-d7bf726b1b1b',
+    },
+  },
+  userStorage: '{\"data\":{}}',
+}
 
 export const NUMBER_GENIE_WELCOME_VALUES = {
   micOpen: true,
@@ -105,7 +105,33 @@ export const NUMBER_GENIE_WELCOME_VALUES = {
     imageAltText: 'mystical crystal ball',
     buttons: [],
   }],
-  suggestions: [ '37', '10', '78', '34' ],
+  suggestions: ['37', '10', '78', '34'],
+}
+
+export const NUMBER_GENIE_EXIT = {
+  conversationToken: '[\"_actions_on_google\",\"game\",\"yes_no\"]',
+  finalResponse: {
+    richResponse: {
+      items: [
+        {
+          simpleResponse: {
+            textToSpeech: '<speak>OK, I\'m already thinking of a number for next time.</speak>',
+            displayText: 'OK, I\'m already thinking of a number for next time.',
+          },
+        },
+      ],
+    },
+  },
+  responseMetadata: {
+    status: {
+      message: 'Success (200)',
+    },
+    queryMatchInfo: {
+      queryMatched: true,
+      intent: '2ae41bb5-5423-414d-9190-1b6dd460e12f',
+    },
+  },
+  userStorage: '{\"data\":{}}',
 }
 
 export const CONVERSATION_WELCOME = {
