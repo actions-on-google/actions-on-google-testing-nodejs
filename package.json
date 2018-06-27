@@ -11,7 +11,7 @@
     },
     "scripts": {
         "lint": "tslint -p .",
-        "build": "tsc",
+        "build": "tsc && cp -r ./locales ./dist",
         "test": "npm run lint && ./node_modules/.bin/ava -c 1 -s ./test/*.js"
     },
     "repository": {

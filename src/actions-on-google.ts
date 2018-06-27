@@ -20,7 +20,7 @@ const grpc = require('grpc')
 const protoFiles = require('google-proto-files')
 import * as path from 'path'
 import { UserRefreshClient } from 'google-auth-library'
-import * as i18n from 'i18n'
+const i18n = require('i18n')
 
 const SUPPORTED_LOCALES = [
     'en-US', 'fr-FR', 'ja-JP', 'de-DE', 'ko-KR',
@@ -130,6 +130,7 @@ export class ActionsOnGoogle {
     _conversationState: Uint8Array
     _endpoint = 'embeddedassistant.googleapis.com'
     _isNewConversation = false
+    _locale: string
 
     location: number[]
     deviceModelId = 'default'
@@ -137,7 +138,7 @@ export class ActionsOnGoogle {
 
     constructor(credentials: UserCredentials) {
         this._client = this._createClient(credentials)
-        this.locale = DEFAULT_LOCALE
+        this._locale = DEFAULT_LOCALE
     }
 
     _createClient(credentials: UserCredentials) {
@@ -152,15 +153,15 @@ export class ActionsOnGoogle {
         return client
     }
 
-    set locale(l: string) {
-        if (!SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).includes(l)) {
+    setLocale(l: string) {
+        if (SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).indexOf(l) === -1) {
             console.warn(`Warning: Unsupported locale '${l}' in this tool. Ignore.`)
         }
-        this.locale = l
+        this._locale = l
         i18n.setLocale(l)
     }
 
-    i18n_(name, params?) {
+    i18n_(name: string, params?: {[key: string]: string;}) {
         if (params) {
             return i18n.__(name, params)
         } else {
@@ -192,7 +193,7 @@ export class ActionsOnGoogle {
         config.getAudioOutConfig().setVolumePercentage(100)
         config.setDialogStateIn(new embeddedAssistantPb.DialogStateIn())
         config.setDeviceConfig(new embeddedAssistantPb.DeviceConfig())
-        config.getDialogStateIn().setLanguageCode(this.locale)
+        config.getDialogStateIn().setLanguageCode(this._locale)
         config.getDialogStateIn().setIsNewConversation(this._isNewConversation)
         if (this._conversationState) {
             config.getDialogStateIn().setConversationState(this._conversationState)
