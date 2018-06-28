@@ -20,7 +20,7 @@ const grpc = require('grpc')
 const protoFiles = require('google-proto-files')
 import * as path from 'path'
 import { UserRefreshClient } from 'google-auth-library'
-const i18n = require('i18n')
+import * as i18n from 'i18n'
 
 const SUPPORTED_LOCALES = [
     'en-US', 'fr-FR', 'ja-JP', 'de-DE', 'ko-KR',
@@ -161,7 +161,7 @@ export class ActionsOnGoogle {
         i18n.setLocale(l)
     }
 
-    i18n_(name: string, params?: {[key: string]: string;}) {
+    i18n_(name: string, params?: i18n.Replacements) {
         if (params) {
             return i18n.__(name, params)
         } else {

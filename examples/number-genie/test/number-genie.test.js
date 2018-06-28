@@ -86,7 +86,7 @@ action.startTest('Number Genie - starts with invalid number', action => {
 
 // Should start action using the French locale, and confirm the response is also in French
 action.startTest('Number Genie French', action => {
-    action.locale = 'fr-FR';
+    action.setLocale('fr-FR');
     return action.send('parle avec mon application test') // Talk to my test app
         .then(({ displayText, cards }) => {
             expect(displayText[1]).to.be.equal("Quel est votre premier essai ?");
