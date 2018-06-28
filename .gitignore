@@ -1,4 +1,7 @@
-**/node_modules/
-**/*credentials.json
-**/package-lock.json
+node_modules/
+*credentials.json
+package-lock.json
+*.tgz
+.nyc_output/
 dist/
+package/
