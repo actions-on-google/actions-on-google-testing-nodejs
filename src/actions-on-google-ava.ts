@@ -18,7 +18,7 @@
 
 import test, { GenericCallbackTestContext } from 'ava'
 import * as promiseFinally from 'promise.prototype.finally'
-import { ActionsOnGoogle, AssistResponse } from './actions-on-google'
+import { ActionsOnGoogle } from './actions-on-google'
 
 promiseFinally.shim()
 
@@ -26,7 +26,9 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     _t: GenericCallbackTestContext<any>
 
-    startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<AssistResponse>) {
+    // It doesn't matter what type of Promise being returned
+    // tslint:disable-next-line
+    startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
         test.cb(testName, t => {
             this._t = t

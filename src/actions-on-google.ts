@@ -276,11 +276,11 @@ export class ActionsOnGoogle {
         }
     }
 
-    startConversation(prompt: string) {
+    startConversation(prompt?: string) {
         return this.startConversationWith(this.i18n_('my_test_app'), prompt)
     }
 
-    startConversationWith(action: string, prompt: string) {
+    startConversationWith(action: string, prompt?: string) {
         const query = prompt
             ? this.i18n_('start_conversation_with_prompt', { app_name: action, prompt })
             : this.i18n_('start_conversation', { app_name: action })
@@ -291,7 +291,7 @@ export class ActionsOnGoogle {
         return this.send(this.i18n_('cancel'))
     }
 
-    send(input: string) {
+    send(input: string): Promise<AssistResponse> {
         const config = new embeddedAssistantPb.AssistConfig()
         config.setTextQuery(input)
         config.setAudioOutConfig(new embeddedAssistantPb.AudioOutConfig())
