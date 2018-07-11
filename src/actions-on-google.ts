@@ -161,6 +161,10 @@ export class ActionsOnGoogle {
         i18n.setLocale(l)
     }
 
+    set locale(l: string) {
+        this.setLocale(l)
+    }
+
     i18n_(name: string, params?: i18n.Replacements) {
         if (params) {
             return i18n.__(name, params)
@@ -352,3 +356,13 @@ export class ActionsOnGoogle {
         })
     }
 }
+
+// Create some method aliases
+export interface ActionsOnGoogle {
+    start: typeof ActionsOnGoogle.prototype.startConversation
+    startWith: typeof ActionsOnGoogle.prototype.startConversationWith
+    cancel: typeof ActionsOnGoogle.prototype.endConversation
+}
+ActionsOnGoogle.prototype.start = ActionsOnGoogle.prototype.startConversation
+ActionsOnGoogle.prototype.startWith = ActionsOnGoogle.prototype.startConversationWith
+ActionsOnGoogle.prototype.cancel = ActionsOnGoogle.prototype.endConversation
