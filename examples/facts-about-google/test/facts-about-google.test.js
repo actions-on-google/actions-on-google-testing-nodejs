@@ -34,7 +34,7 @@ const action = new ActionsOnGoogleAva(require('../../../test/test-credentials.js
 
 // Start action and ask for history facts until there are no more history facts
 action.startTest('Facts about Google - history path', action => {
-    return action.startConversation()
+    return action.start()
         .then((res) => {
             return action.send('history')
         })
@@ -62,7 +62,7 @@ action.startTest('Facts about Google - history path', action => {
 
 // Start action and ask for headquarter facts until there are no more headquarter facts
 action.startTest('Facts about Google - headquarters path', action => {
-    return action.startConversation()
+    return action.start()
         .then(({ textToSpeech }) => {
             return action.send('headquarters')
         })
@@ -86,7 +86,7 @@ action.startTest('Facts about Google - headquarters path', action => {
 
 // Start action and ask for a cat fact right away
 action.startTest('Facts about Google - direct cat path', action => {
-    return action.startConversation()
+    return action.start()
         .then(({ textToSpeech }) => {
             return action.send('cats');
         })
@@ -99,7 +99,7 @@ action.startTest('Facts about Google - direct cat path', action => {
 // Start action and ask for headquarters until there are no more headquarter facts,
 // then switch to provide facts about cats
 action.startTest('Facts about Google - cat path', action => {
-    return action.startConversation()
+    return action.start()
         .then(({ textToSpeech }) => {
             return action.send('headquarters')
         })
