@@ -71,6 +71,16 @@ action.startTest('Facts about Google - direct cat path', action => {
 ```
 12. Run `npm test`. You should see your test be executed.
 
+## Supported features
+
+This library provides the following features to control your conversation:
+
+* `action.startConversation()`, `action.start()` - Start your conversation with your action using "my test app".
+* `action.startConversationWith()`, `action.startWith()` - Start your conversation with your action using the specified action name.
+* `action.send()` - Send some phrase to your action.
+* `action.endConversation()`, `action.cancel()` - End your conversation. This library says "cancel".
+* `action.setLocale()`, `action.locale` - Set a locale for your conversation.
+
 ## Possible responses
 
 These responses will come from your fulfillment, and will consist of whatever
