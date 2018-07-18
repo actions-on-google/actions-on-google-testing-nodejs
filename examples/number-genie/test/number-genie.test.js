@@ -30,7 +30,7 @@ winston.loggers.add('DEFAULT_LOGGER', {
 });
 
 const { ActionsOnGoogleAva } = require('../../../dist/');
-const action = new ActionsOnGoogleAva(require('../../../test/test-credentials.json'));
+const action = new ActionsOnGoogleAva(require('../../../test-credentials.json'));
 
 // Should start action, presetting the answer to fifty. Then guess a few times until the answer is 50.
 action.startTest('Number Genie - should guess the right answer', action => {

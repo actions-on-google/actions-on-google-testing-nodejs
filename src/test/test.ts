@@ -32,7 +32,7 @@ winston.loggers.add('DEFAULT_LOGGER', {
   },
 })
 
-const testCredentialsFile = '../../test/test-credentials.json'
+const testCredentialsFile = '../../test-credentials.json'
 
 // Mock implementation of gRPC call that allows server response to be mocked
 // tslint:disable-next-line

@@ -19,7 +19,7 @@ import { expect } from 'chai'
 import { ActionsOnGoogleAva, AssistResponse } from 'actions-on-google-testing'
 
 const action: ActionsOnGoogleAva = new ActionsOnGoogleAva(require(
-    '../../../test/test-credentials.json'))
+    '../../../test-credentials.json'))
 
 // Start action and ask for history facts until there are no more history factsi
 action.startTest('Facts about Google - history path', async (action: ActionsOnGoogleAva) => {

@@ -31,7 +31,7 @@ node generate-credentials.js /path/to/credentials.json
 8. Copy and paste the URL and enter the authorization code. You will see a response
 similar to the following:
 
-`Saved user credentials in "test/test-credentials.json"`
+`Saved user credentials in "test-credentials.json"`
 
 9. Create a JavaScript file for your tests: `test.js`
 

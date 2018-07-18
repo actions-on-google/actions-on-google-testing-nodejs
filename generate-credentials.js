@@ -88,7 +88,7 @@ fs.readFile(clientSecretPath, fileOptions, (err, data) => {
                 refresh_token: refreshToken,
                 type: 'authorized_user'
             }
-            const filename = 'test/test-credentials.json';
+            const filename = 'test-credentials.json';
             fs.writeFile(filename, JSON.stringify(fileData), fileOptions, err => {
                 if (err) {
                     console.error(`Unable to save "${filename}"`, err);
