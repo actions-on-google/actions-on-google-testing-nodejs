@@ -177,6 +177,10 @@ export class ActionsOnGoogle {
         return this.startConversationWith(this.i18n_('my_test_app'), prompt)
     }
 
+    start(prompt: string) {
+        return this.startConversation(prompt)
+    }
+
     startConversationWith(action: string, prompt: string) {
         const query = prompt
             ? this.i18n_('start_conversation_with_prompt', { app_name: action, prompt })
@@ -184,8 +188,16 @@ export class ActionsOnGoogle {
         return this.send(query)
     }
 
+    startWith(action: string, prompt: string) {
+        return this.startConversationWith(action, prompt)
+    }
+
     endConversation() {
         return this.send(this.i18n_('cancel'))
+    }
+
+    cancel() {
+        return this.endConversation()
     }
 
     send(input: string) {
@@ -356,13 +368,3 @@ export class ActionsOnGoogle {
         })
     }
 }
-
-// Create some method aliases
-export interface ActionsOnGoogle {
-    start: typeof ActionsOnGoogle.prototype.startConversation
-    startWith: typeof ActionsOnGoogle.prototype.startConversationWith
-    cancel: typeof ActionsOnGoogle.prototype.endConversation
-}
-ActionsOnGoogle.prototype.start = ActionsOnGoogle.prototype.startConversation
-ActionsOnGoogle.prototype.startWith = ActionsOnGoogle.prototype.startConversationWith
-ActionsOnGoogle.prototype.cancel = ActionsOnGoogle.prototype.endConversation
