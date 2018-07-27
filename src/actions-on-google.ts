@@ -63,6 +63,102 @@ interface AogSuggestion {
     title: string
 }
 
+interface AogOptionInfo {
+    key: string,
+    synonyms: string[]
+}
+
+interface AogTableCell {
+    text: string
+}
+
+interface JsonObject {
+    // tslint:disable-next-line:no-any support unused fields
+    [key: string]: any
+}
+
+interface AssistantSdkResponse extends JsonObject {
+    dialog_state_out?: {
+        conversation_state: Uint8Array,
+        supplemental_display_text: string,
+    },
+    device_action?: {
+        device_request_json: string,
+    },
+    debug_info?: {
+        aog_agent_to_assistant_json: string,
+    }
+}
+
+interface ActionResponseItem extends JsonObject {
+    simpleResponse?: {
+        textToSpeech?: string,
+        displayText?: string,
+        ssml?: string,
+    }
+    basicCard?: {
+        title?: string,
+        subtitle?: string,
+        formattedText?: string,
+        image?: {
+            url?: string,
+            accessibilityText?: string,
+        },
+        buttons?: {
+            title?: string,
+            openUrlAction?: {
+                url?: string,
+            },
+        }[],
+    },
+    carouselBrowse?: {
+        items: {
+            title?: string,
+            description?: string,
+            footer?: string,
+            image?: {
+                url?: string,
+                accessibilityText?: string,
+            },
+            openUrlAction?: {
+                url?: string,
+            },
+        }[],
+    },
+    carouselSelect?: {
+        items: {
+            title?: string,
+            description?: string,
+            image?: {
+                url?: string,
+                accessibilityText?: string,
+            },
+        }[],
+    },
+    listSelect?: {
+        title?: string,
+        items: {
+            title?: string,
+            description?: string,
+            image?: {
+                url?: string,
+                accessibilityText?: string,
+            },
+        }[],
+    },
+    mediaResponse?: {
+        mediaType: string,
+        mediaObjects: {
+            name: string,
+            description: string,
+            contentUrl: string,
+            icon: {
+                url: string,
+            },
+        }[],
+    }
+}
+
 export interface UserCredentials {
     client_id: string,
     client_secret: string,
@@ -85,13 +181,19 @@ export interface AssistResponseCard {
 }
 
 export interface AssistResponseList {
-    title: string,
+    title?: string,
     items: {
-        title: string,
-        description: string,
-        imageUrl: string,
-        imageAltText: string,
+        title?: string,
+        description?: string,
+        imageUrl?: string,
+        imageAltText?: string,
+        optionInfo?: AogOptionInfo,
     }[],
+}
+
+export interface AssistResponseTableRow {
+    cells: string[],
+    divider: boolean,
 }
 
 export interface AssistResponse {
@@ -101,12 +203,13 @@ export interface AssistResponse {
     ssml: string[],
     cards?: AssistResponseCard[]
     carousel?: {
-        title: string,
+        title?: string,
         description?: string,
-        imageUrl: string,
-        imageAltText: string,
+        imageUrl?: string,
+        imageAltText?: string,
         footer?: string
         url?: string,
+        optionInfo?: AogOptionInfo,
     }[],
     list?: AssistResponseList,
     mediaResponse?: {
@@ -120,6 +223,10 @@ export interface AssistResponse {
     linkOutSuggestion?: {
         url: string,
         name: string,
+    }
+    table?: {
+        headers: string[],
+        rows: AssistResponseTableRow[],
     }
     deviceAction?: string
 }
@@ -173,22 +280,22 @@ export class ActionsOnGoogle {
         }
     }
 
-    startConversation(prompt: string) {
+    startConversation(prompt?: string) {
         return this.startConversationWith(this.i18n_('my_test_app'), prompt)
     }
 
-    start(prompt: string) {
+    start(prompt?: string) {
         return this.startConversation(prompt)
     }
 
-    startConversationWith(action: string, prompt: string) {
+    startConversationWith(action: string, prompt?: string) {
         const query = prompt
             ? this.i18n_('start_conversation_with_prompt', { app_name: action, prompt })
             : this.i18n_('start_conversation', { app_name: action })
         return this.send(query)
     }
 
-    startWith(action: string, prompt: string) {
+    startWith(action: string, prompt?: string) {
         return this.startConversationWith(action, prompt)
     }
 
@@ -200,7 +307,7 @@ export class ActionsOnGoogle {
         return this.endConversation()
     }
 
-    send(input: string) {
+    send(input: string): Promise<AssistResponse> {
         const config = new embeddedAssistantPb.AssistConfig()
         config.setTextQuery(input)
         config.setAudioOutConfig(new embeddedAssistantPb.AudioOutConfig())
@@ -242,8 +349,7 @@ export class ActionsOnGoogle {
                 suggestions: [],
             }
 
-            // tslint:disable-next-line
-            conversation.on('data', (data: any) => {
+            conversation.on('data', (data: AssistantSdkResponse) => {
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
                     if (data.dialog_state_out.supplemental_display_text &&
@@ -258,12 +364,53 @@ export class ActionsOnGoogle {
                 if (data.debug_info) {
                     const debugInfo = JSON.parse(data.debug_info.aog_agent_to_assistant_json)
                     const actionResponse =
-                        debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt ||
-                        debugInfo.finalResponse.richResponse
-                    assistResponse.micOpen = debugInfo.expectUserResponse
+                        debugInfo.expectedInputs ?
+                            debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt :
+                            debugInfo.finalResponse.richResponse
+                    assistResponse.micOpen = !!debugInfo.expectUserResponse
 
+                    // Process a carouselSelect or listSelect
+                    const possibleIntents = debugInfo.expectedInputs ?
+                        debugInfo.expectedInputs[0].possibleIntents : undefined
+                    if (possibleIntents) {
+                        const possibleIntent = possibleIntents[0]
+                        const inputValueData = possibleIntent.inputValueData
+                        if (inputValueData) {
+                            const carouselSelect = inputValueData.carouselSelect
+                            const listSelect = inputValueData.listSelect
+                            if (carouselSelect) {
+                                assistResponse.carousel = []
+                                for (const item of carouselSelect.items) {
+                                    assistResponse.carousel.push({
+                                        optionInfo: item.optionInfo,
+                                        title: item.title,
+                                        description: item.description,
+                                        imageUrl: item.image.url,
+                                        imageAltText: item.image.accessibilityText,
+                                    })
+                                }
+                            }
+                            if (listSelect) {
+                                assistResponse.list = {
+                                    title: listSelect.title,
+                                    items: [],
+                                }
+                                for (const item of listSelect.items) {
+                                    assistResponse.list.items.push({
+                                        optionInfo: item.optionInfo,
+                                        title: item.title,
+                                        description: item.description,
+                                        imageUrl: item.image.url,
+                                        imageAltText: item.image.accessibilityText,
+                                    })
+                                }
+                            }
+                        }
+                    }
+
+                    // Process other response types
                     // tslint:disable-next-line
-                    actionResponse.items.forEach((i: any) => {
+                    actionResponse.items.forEach((i: ActionResponseItem) => {
                         if (i.simpleResponse) {
                             if (i.simpleResponse.textToSpeech) {
                                 assistResponse.textToSpeech.push(i.simpleResponse.textToSpeech)
@@ -280,53 +427,33 @@ export class ActionsOnGoogle {
                                 title: i.basicCard.title,
                                 subtitle: i.basicCard.subtitle,
                                 text: i.basicCard.formattedText,
-                                imageUrl: i.basicCard.image.url,
-                                imageAltText: i.basicCard.image.accessibilityText,
+                                imageUrl: i.basicCard.image
+                                    ? i.basicCard.image.url : undefined,
+                                imageAltText: i.basicCard.image
+                                    ? i.basicCard.image.accessibilityText : undefined,
                                 buttons: [],
                             }
                             if (i.basicCard.buttons) {
                                 for (const button of i.basicCard.buttons) {
                                     card.buttons.push({
                                         title: button.title,
-                                        url: button.openUrlAction.url,
+                                        url: button.openUrlAction
+                                            ? button.openUrlAction.url : undefined,
                                     } as AssistResponseButton)
                                 }
                             }
                             assistResponse.cards.push(card)
                         } else if (i.carouselBrowse) {
                             assistResponse.carousel = []
-                            for (const item of i.carouselBrowse) {
+                            for (const item of i.carouselBrowse.items) {
                                 assistResponse.carousel.push({
                                     title: item.title,
                                     description: item.description,
                                     footer: item.footer,
-                                    imageUrl: item.image.url,
-                                    imageAltText: item.image.accessibilityText,
-                                    url: item.openUrlAction.url,
-                                })
-                            }
-                        } else if (i.carouselSelect) {
-                            assistResponse.carousel = []
-                            for (const item of i.carouselSelect) {
-                                assistResponse.carousel.push({
-                                    title: item.title,
-                                    description: item.description,
-                                    imageUrl: item.image.url,
-                                    imageAltText: item.image.accessibilityText,
-                                })
-                            }
-                        } else if (i.listSelect) {
-                            assistResponse.list = {
-                                title: '',
-                                items: [],
-                            }
-                            assistResponse.list.title = i.listSelect.title
-                            for (const item of i.listSelect.items) {
-                                assistResponse.list.items.push({
-                                    title: item.title,
-                                    description: item.description,
-                                    imageUrl: item.image.url,
-                                    imageAltText: item.image.accessibilityText,
+                                    imageUrl: item.image ? item.image.url : undefined,
+                                    imageAltText: item.image
+                                        ? item.image.accessibilityText : undefined,
+                                    url: item.openUrlAction ? item.openUrlAction.url : undefined,
                                 })
                             }
                         } else if (i.mediaResponse) {
@@ -336,6 +463,24 @@ export class ActionsOnGoogle {
                                 description: i.mediaResponse.mediaObjects[0].description,
                                 sourceUrl: i.mediaResponse.mediaObjects[0].contentUrl,
                                 icon: i.mediaResponse.mediaObjects[0].icon.url,
+                            }
+                        } else if (i.tableCard) {
+                            assistResponse.table = {
+                                headers: [],
+                                rows: [],
+                            }
+                            for (const property of i.tableCard.columnProperties) {
+                                assistResponse.table.headers.push(property.header)
+                            }
+                            for (const row of i.tableCard.rows) {
+                                const rowData: AssistResponseTableRow = {
+                                    cells: [],
+                                    divider: row.dividerAfter,
+                                }
+                                for (const cell of row.cells) {
+                                    rowData.cells.push((cell as AogTableCell).text)
+                                }
+                                assistResponse.table.rows.push(rowData)
                             }
                         }
                     })

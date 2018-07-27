@@ -18,7 +18,7 @@
 
 import test, { GenericCallbackTestContext } from 'ava'
 import * as promiseFinally from 'promise.prototype.finally'
-import { ActionsOnGoogle, AssistResponse } from './actions-on-google'
+import { ActionsOnGoogle } from './actions-on-google'
 
 promiseFinally.shim()
 
@@ -26,28 +26,34 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     _t: GenericCallbackTestContext<any>
 
-    startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<AssistResponse>) {
+    // It doesn't matter what type of Promise being returned
+    // tslint:disable-next-line
+    startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
         test.cb(testName, t => {
             this._t = t
             this._t.plan(1)
             console.log(`** Starting test ${testName} **`)
             callback(this)
+                .then(() => {
+                    // The test has completed successfully
+                    // If the test exits early, only the
+                    // `finally` function will be run
+                    console.log('test passes')
+                    this._t.pass()
+                })
+                .catch((e: Error) => {
+                    console.log('test error', e)
+                })
                 .finally(() => {
                     return this.endConversation()
                         .then((res) => {
-                            console.log('debug: test ends')
+                            console.log('test ends')
                             this._t.end()
                             console.log('\n')
                         })
                 })
         })
-    }
-
-    endTest() {
-        console.log('debug: test passes')
-        this._t.pass()
-        return Promise.resolve()
     }
 
     send(input: string) {

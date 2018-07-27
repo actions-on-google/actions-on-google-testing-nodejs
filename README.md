@@ -31,7 +31,7 @@ node generate-credentials.js /path/to/credentials.json
 8. Copy and paste the URL and enter the authorization code. You will see a response
 similar to the following:
 
-`Saved user credentials in "test/test-credentials.json"`
+`Saved user credentials in "test-credentials.json"`
 
 9. Create a JavaScript file for your tests: `test.js`
 
@@ -56,12 +56,11 @@ action.startTest('Facts about Google - direct cat path', action => {
             // The entire set of responses are listed below.
             // You can use Chai to verify responses.
             expect(ssml[0]).to.have.string("Alright, here's a cat fact.")
-            return action.endTest();
         })
 });
 ```
 
-10. Run `npm install`
+10. Run `yarn`
 11. Update your `package.json` to add this test file to your test script.
 
 ```JSON
@@ -69,7 +68,7 @@ action.startTest('Facts about Google - direct cat path', action => {
     "test": "./node_modules/.bin/ava -c 1 -s ./test.js"
 },
 ```
-12. Run `npm test`. You should see your test be executed.
+12. Run `yarn test`. You should see your test be executed.
 
 ## Supported features
 
@@ -124,14 +123,19 @@ res
   .linkOutSuggestion
     .url - String
     .name - String
+  .table
+    .headers - String[]
+    .rows - Row[]
+      .cells - String[]
+      .divider - Boolean
 ```
 
 ## Additional features
 
 You can run a few different types of automated test scenarios.
 
-* `action.setLocation([latitude, longitude]);`
-* `action.setLocale('en-US'); // Or any other supported locale`
+* `action.location = [latitude, longitude];`
+* `action.locale = 'en-US'; // Or any other supported locale`
 
 ## Known Issues
 

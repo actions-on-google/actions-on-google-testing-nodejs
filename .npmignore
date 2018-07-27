@@ -1,0 +1,14 @@
+.nyc_output/
+dist/test/
+examples/
+locales/
+package/
+src/
+test/
+*.DS_Store
+*.log
+*.tgz
+*credentials.json
+tslint.json
+tsconfig.json
+CONTRIBUTING.md
