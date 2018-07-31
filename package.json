@@ -13,7 +13,9 @@
         "clean": "rm -rf dist",
         "lint": "tslint -p .",
         "build": "tsc && cp -r ./locales ./dist",
-        "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/test.js"
+        "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/test.js",
+        "docs": "typedoc --options typedoc.json",
+        "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs"
     },
     "repository": {
         "type": "git",
@@ -53,6 +55,7 @@
         "sinon": "^6.0.0",
         "tslint": "^5.9.1",
         "tslint-eslint-rules": "^5.1.0",
+        "typedoc": "^0.11.1",
         "typescript": "^2.7.2",
         "winston": "2.2.0"
     }

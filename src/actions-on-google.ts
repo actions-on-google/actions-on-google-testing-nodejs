@@ -260,6 +260,9 @@ export class ActionsOnGoogle {
         return client
     }
 
+    /**
+     * @deprecated This will be removed at releasing a version 1.
+     */
     setLocale(l: string) {
         this.locale = l
     }
@@ -280,6 +283,9 @@ export class ActionsOnGoogle {
         }
     }
 
+    /**
+     * @deprecated This will be removed at releasing a version 1.
+     */
     startConversation(prompt?: string) {
         return this.start(prompt)
     }
@@ -288,6 +294,9 @@ export class ActionsOnGoogle {
         return this.startWith(this.i18n_('my_test_app'), prompt)
     }
 
+    /**
+     * @deprecated This will be removed at releasing a version 1.
+     */
     startConversationWith(action: string, prompt?: string) {
         return this.startWith(action, prompt)
     }
@@ -299,6 +308,9 @@ export class ActionsOnGoogle {
         return this.send(query)
     }
 
+    /**
+     * @deprecated This will be removed at releasing a version 1.
+     */
     endConversation() {
         return this.cancel()
     }
