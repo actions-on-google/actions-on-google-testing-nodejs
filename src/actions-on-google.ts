@@ -261,15 +261,15 @@ export class ActionsOnGoogle {
     }
 
     setLocale(l: string) {
+        this.locale = l
+    }
+
+    set locale(l: string) {
         if (SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).indexOf(l) === -1) {
             console.warn(`Warning: Unsupported locale '${l}' in this tool. Ignore.`)
         }
         this._locale = l
         i18n.setLocale(l)
-    }
-
-    set locale(l: string) {
-        this.setLocale(l)
     }
 
     i18n_(name: string, params?: i18n.Replacements) {
@@ -281,30 +281,30 @@ export class ActionsOnGoogle {
     }
 
     startConversation(prompt?: string) {
-        return this.startConversationWith(this.i18n_('my_test_app'), prompt)
+        return this.start(prompt)
     }
 
     start(prompt?: string) {
-        return this.startConversation(prompt)
+        return this.startWith(this.i18n_('my_test_app'), prompt)
     }
 
     startConversationWith(action: string, prompt?: string) {
+        return this.startWith(action, prompt)
+    }
+
+    startWith(action: string, prompt?: string) {
         const query = prompt
             ? this.i18n_('start_conversation_with_prompt', { app_name: action, prompt })
             : this.i18n_('start_conversation', { app_name: action })
         return this.send(query)
     }
 
-    startWith(action: string, prompt?: string) {
-        return this.startConversationWith(action, prompt)
-    }
-
     endConversation() {
-        return this.send(this.i18n_('cancel'))
+        return this.cancel()
     }
 
     cancel() {
-        return this.endConversation()
+        return this.send(this.i18n_('cancel'))
     }
 
     send(input: string): Promise<AssistResponse> {
