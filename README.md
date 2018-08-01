@@ -74,11 +74,12 @@ action.startTest('Facts about Google - direct cat path', action => {
 
 This library provides the following features to control your conversation:
 
-* `action.startConversation()`, `action.start()` - Start your conversation with your action using "my test app".
-* `action.startConversationWith()`, `action.startWith()` - Start your conversation with your action using the specified action name.
+* `action.start()` - Start your conversation with your action using "my test app".
+* `action.startWith()` - Start your conversation with your action using the specified action name.
 * `action.send()` - Send some phrase to your action.
-* `action.endConversation()`, `action.cancel()` - End your conversation. This library says "cancel".
-* `action.setLocale()`, `action.locale` - Set a locale for your conversation.
+* `action.cancel()` - End your conversation. This library says "cancel".
+* `action.locale` - Set a locale for your conversation.
+* `action.location` - Set an array of a latitude and a longitude.
 
 ## Possible responses
 
@@ -129,13 +130,6 @@ res
       .cells - String[]
       .divider - Boolean
 ```
-
-## Additional features
-
-You can run a few different types of automated test scenarios.
-
-* `action.location = [latitude, longitude];`
-* `action.locale = 'en-US'; // Or any other supported locale`
 
 ## Known Issues
 
