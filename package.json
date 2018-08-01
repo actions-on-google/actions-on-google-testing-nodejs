@@ -10,7 +10,7 @@
         "node": ">=6.0.0"
     },
     "scripts": {
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist docs",
         "lint": "tslint -p .",
         "build": "tsc && cp -r ./locales ./dist",
         "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/test.js",
