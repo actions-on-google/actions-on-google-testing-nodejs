@@ -261,7 +261,7 @@ export class ActionsOnGoogle {
     }
 
     /**
-     * @deprecated This will be removed at releasing a version 1.
+     * @deprecated This will be removed in future releases. Use `action.locale` instead.
      */
     setLocale(l: string) {
         this.locale = l
