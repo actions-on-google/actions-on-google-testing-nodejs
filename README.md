@@ -151,9 +151,15 @@ $ action-interactive -l <LOCALE> -c <CREDENTIAL_FILE> "<YOUR_ACTION_NAME>" "<PRO
 ```
 
 * `<YOUR_ACTION_NAME` - The name to invoke your action. If omitted, the default app name for test app is used (ex. "my test app").
-* `<PROMPT>` - The additional prompt you want to pass to your action. Optional.
+* `<PROMPT>` - The additional prompt you want to pass to your action.
 * `<LOCALE>` - The locale string. If omitted, "en-US" is used.
 * `<CREDENTIAL_FILE>` - The file path of your credential file which was created by the previous step. If omitted, "./credentials.json" is used.
+
+All options above can be omitted. If you execute `action-interactive` without any options, it means the following:
+
+```bash
+action-interactive -l en-US -c ./credentials.json "my test app"
+```
 
 If your test app can be invoked normally, you can interact with the action as like the following:
 
