@@ -44,7 +44,7 @@ const action = new ActionsOnGoogleAva(require('./test/test-credentials.json'));
 // Start out with giving a name to this test
 action.startTest('Facts about Google - direct cat path', action => {
     // Return a promise that starts a conversation with your test app
-    return action.startConversation()
+    return action.start()
         .then(({ textToSpeech }) => {
             // Get a response back from your fulfillment.
             // To continue the conversation, you can send
