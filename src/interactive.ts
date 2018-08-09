@@ -26,18 +26,21 @@ class Interactive {
     async main(): Promise<void> {
         const argv = yargs
             .usage('Usage: action-interactive [Options] [Action] [Prompt]')
-            .example('action-interactive -c ./credentials.json "my test app"', '')
+            .example('action-interactive "Personal Recipe" "to find my recipes"', '')
             .option('credential', {
                 alias: 'c',
                 description: 'Your credential file path',
+                default: './credentials.json',
                 type: 'string',
             })
             .option('locale', {
                 alias: 'l',
                 description: 'Locale string',
+                default: 'en-US',
                 type: 'string',
             })
             .version(false)
+            .wrap(yargs.terminalWidth())
             .argv
         const actionName = argv._.length >= 1 ? argv._[0] : undefined
         const prompt = argv._.length >= 2 ? argv._[1] : undefined
