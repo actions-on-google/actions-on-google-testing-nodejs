@@ -17,8 +17,8 @@
  */
 
 import * as yargs from 'yargs'
-import * as inquirer from 'inquirer'
 import * as fs from 'fs'
+import * as readline from 'readline'
 import {ActionsOnGoogle, AssistResponse} from './actions-on-google'
 
 class Interactive {
@@ -50,7 +50,7 @@ class Interactive {
             action.setLocale(locale)
 
             const response = await this.start(action, actionName, prompt)
-            this.conversation(action, response)
+            await this.conversation(action, response)
         } catch(e) {
             if (action) {
                 try {
@@ -58,24 +58,28 @@ class Interactive {
                 } catch(_) {
                 }
             }
+            console.log('')
             console.log(`Conversation aborted: ${e.toString()}`)
         }
     }
 
     async conversation(action: ActionsOnGoogle, response: AssistResponse): Promise<void> {
-        console.log('')
-        console.log('\x1b[33m%s\x1b[0m', 'Action response:')
-        console.log(response)
-        console.log('')
-        const isContinue = await this.check(response)
-        if (isContinue) {
-            const phrase = await this.hear()
-            const response = await this.send(action, phrase)
-            this.conversation(action, response)
-        } else {
-            await action.endConversation()
-            console.log('End conversation.')
-        }
+        return new Promise<void>(async (resolve, reject) => {
+            console.log('')
+            console.log('Action response:')
+            console.log(response)
+            console.log('')
+            const isContinue = await this.check(response)
+            if (isContinue) {
+                const phrase = await this.hear()
+                const response = await this.send(action, phrase)
+                return this.conversation(action, response)
+            } else {
+                await action.endConversation()
+                console.log('End conversation.')
+                resolve()
+            }
+        })
     }
 
     async start(action: ActionsOnGoogle,
@@ -92,14 +96,18 @@ class Interactive {
 
     async hear(): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
-            const answers = await inquirer.prompt<{ phrase: string }>([
-                {
-                    type: 'input',
-                    name: 'phrase',
-                    message: 'User phrase:',
-                },
-            ])
-            resolve(answers.phrase)
+            const rl = readline.createInterface({
+                input: process.stdin,
+                output: process.stdout,
+            })
+            rl.on('SIGINT', () => {
+                rl.close()
+                reject('SIGINT')
+            })
+            rl.question('> ', answer => {
+                rl.close()
+                resolve(answer)
+            })
         })
     }
 
