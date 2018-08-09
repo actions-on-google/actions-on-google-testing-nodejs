@@ -69,15 +69,19 @@ class Interactive {
             console.log('Action response:')
             console.log(response)
             console.log('')
-            const isContinue = await this.check(response)
-            if (isContinue) {
-                const phrase = await this.hear()
-                const response = await this.send(action, phrase)
-                return this.conversation(action, response)
-            } else {
-                await action.endConversation()
-                console.log('End conversation.')
+            try {
+                const isContinue = await this.check(response)
+                if (isContinue) {
+                    const phrase = await this.hear()
+                    const response = await this.send(action, phrase)
+                    await this.conversation(action, response)
+                } else {
+                    await action.endConversation()
+                    console.log('End conversation.')
+                }
                 resolve()
+            } catch(e) {
+                reject(e)
             }
         })
     }
@@ -86,11 +90,15 @@ class Interactive {
                 actionName: string | undefined,
                 prompt: string | undefined): Promise<AssistResponse> {
         return new Promise<AssistResponse>(async (resolve, reject) => {
-            const response =
-                actionName ?
-                    await action.startConversationWith(actionName, prompt) :
-                    await action.startConversation(prompt)
-            resolve(response)
+            try {
+                const response =
+                    actionName ?
+                        await action.startConversationWith(actionName, prompt) :
+                        await action.startConversation(prompt)
+                resolve(response)
+            } catch(e) {
+                reject(e)
+            }
         })
     }
 
@@ -102,18 +110,28 @@ class Interactive {
             })
             rl.on('SIGINT', () => {
                 rl.close()
+                console.log('')
                 reject('SIGINT')
             })
-            rl.question('> ', answer => {
+            rl.question('> ', async answer => {
                 rl.close()
-                resolve(answer)
+                if (!answer || answer.length === 0) {
+                    console.log('Please enter a user phrase.')
+                    resolve(await this.hear())
+                } else {
+                    resolve(answer)
+                }
             })
         })
     }
 
     async send(action: ActionsOnGoogle, phrase: string): Promise<AssistResponse> {
         return new Promise<AssistResponse>(async (resolve, reject) => {
-            resolve(await action.send(phrase))
+            try {
+                resolve(await action.send(phrase))
+            } catch(e) {
+                reject(e)
+            }
         })
     }
 
