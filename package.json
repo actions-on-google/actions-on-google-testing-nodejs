@@ -6,7 +6,7 @@
     "author": "Google Inc.",
     "main": "dist/index.js",
     "bin": {
-        "action-interactive": "./dist/interactive.js"
+        "action-test": "./dist/action-test.js"
     },
     "types": "dist/index.d.ts",
     "engines": {

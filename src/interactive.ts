@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 /**
  * Copyright 2018 Google LLC
  *
@@ -16,43 +14,33 @@
  *
  */
 
-import * as yargs from 'yargs'
 import * as fs from 'fs'
 import * as readline from 'readline'
 import {ActionsOnGoogle, AssistResponse} from './actions-on-google'
 
-class Interactive {
+export interface InteractiveParameters {
+    actionName: string | undefined
+    prompt: string | undefined
+    credential: string | undefined
+    locale: string | undefined
+}
 
-    async main(): Promise<void> {
-        const argv = yargs
-            .usage('Usage: action-interactive [Options] [Action] [Prompt]')
-            .example('action-interactive "Personal Recipe" "to find my recipes"', '')
-            .option('credential', {
-                alias: 'c',
-                description: 'Your credential file path',
-                default: './credentials.json',
-                type: 'string',
-            })
-            .option('locale', {
-                alias: 'l',
-                description: 'Locale string',
-                default: 'en-US',
-                type: 'string',
-            })
-            .version(false)
-            .wrap(yargs.terminalWidth())
-            .argv
-        const actionName = argv._.length >= 1 ? argv._[0] : undefined
-        const prompt = argv._.length >= 2 ? argv._[1] : undefined
-        const credential = argv.credential || './credentials.json'
-        const locale = argv.locale || 'en-US'
+export class Interactive {
+
+    constructor(private params: InteractiveParameters) {
+    }
+
+    async start(): Promise<void> {
+        const credential = this.params.credential || './credentials.json'
+        const locale = this.params.locale || 'en-US'
 
         let action: ActionsOnGoogle | undefined
         try {
             action = new ActionsOnGoogle(require(fs.realpathSync(credential)))
             action.setLocale(locale)
 
-            const response = await this.start(action, actionName, prompt)
+            const response = await this.invokeAction(
+                action, this.params.actionName, this.params.prompt)
             await this.conversation(action, response)
         } catch(e) {
             if (action) {
@@ -66,7 +54,7 @@ class Interactive {
         }
     }
 
-    async conversation(action: ActionsOnGoogle, response: AssistResponse): Promise<void> {
+    private async conversation(action: ActionsOnGoogle, response: AssistResponse): Promise<void> {
         return new Promise<void>(async (resolve, reject) => {
             console.log('')
             console.log('Action response:')
@@ -89,9 +77,9 @@ class Interactive {
         })
     }
 
-    async start(action: ActionsOnGoogle,
-                actionName: string | undefined,
-                prompt: string | undefined): Promise<AssistResponse> {
+    private async invokeAction(action: ActionsOnGoogle,
+                       actionName: string | undefined,
+                       prompt: string | undefined): Promise<AssistResponse> {
         return new Promise<AssistResponse>(async (resolve, reject) => {
             try {
                 const response =
@@ -105,7 +93,7 @@ class Interactive {
         })
     }
 
-    async hear(): Promise<string> {
+    private async hear(): Promise<string> {
         return new Promise<string>(async (resolve, reject) => {
             const rl = readline.createInterface({
                 input: process.stdin,
@@ -128,7 +116,7 @@ class Interactive {
         })
     }
 
-    async send(action: ActionsOnGoogle, phrase: string): Promise<AssistResponse> {
+    private async send(action: ActionsOnGoogle, phrase: string): Promise<AssistResponse> {
         return new Promise<AssistResponse>(async (resolve, reject) => {
             try {
                 resolve(await action.send(phrase))
@@ -138,12 +126,10 @@ class Interactive {
         })
     }
 
-    async check(response: AssistResponse): Promise<boolean> {
+    private async check(response: AssistResponse): Promise<boolean> {
         return new Promise<boolean>(async (resolve, reject) => {
             resolve(response.micOpen)
         })
     }
 
 }
-
-new Interactive().main()
