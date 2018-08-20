@@ -18,7 +18,7 @@
 
 import test, { GenericCallbackTestContext } from 'ava'
 import * as promiseFinally from 'promise.prototype.finally'
-import { ActionsOnGoogle } from './actions-on-google'
+import { ActionsOnGoogle, AssistResponse } from './actions-on-google'
 
 promiseFinally.shim()
 
@@ -62,7 +62,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         return super.send(input)
             .then((res) => {
                 console.log(res)
-                return Promise.resolve(res)
+                return res as AssistResponse // cast to maintain consistent shared type
             })
     }
 }
