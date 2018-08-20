@@ -16,7 +16,7 @@
         "clean": "rm -rf dist",
         "lint": "tslint -p .",
         "build": "tsc && cp -r ./locales ./dist",
-        "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/test.js"
+        "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/*.test.js"
     },
     "repository": {
         "type": "git",
