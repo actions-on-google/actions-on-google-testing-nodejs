@@ -1,0 +1,12 @@
+{
+  "out": "docs",
+  "exclude": [
+    "**/test/**/*.*",
+    "**/index.ts"
+  ],
+  "ignoreCompilerErrors": true,
+  "disableOutputCheck": true,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeNotExported": true
+}
