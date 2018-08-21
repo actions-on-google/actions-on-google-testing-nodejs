@@ -14,9 +14,13 @@
         "lint": "tslint -p .",
         "build": "tsc && cp -r ./locales ./dist",
         "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/test.js",
+        "test:git": "sh script/git-presubmit-lint.sh",
+        "test:tar": "bash script/package-contents.sh",
+        "test:ci": "yarn test && yarn test:git && yarn test:tar",
         "docs": "typedoc --options typedoc.json",
         "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs",
-        "release": "yarn clean && yarn lint && yarn build && yarn publish"
+        "release": "yarn clean && yarn lint && yarn build && yarn publish && yarn release:changelog",
+        "release:changelog": "sh script/changelog.sh"
     },
     "repository": {
         "type": "git",
