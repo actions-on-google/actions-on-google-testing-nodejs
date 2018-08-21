@@ -15,7 +15,8 @@
         "build": "tsc && cp -r ./locales ./dist",
         "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/test.js",
         "docs": "typedoc --options typedoc.json",
-        "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs"
+        "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs",
+        "release": "yarn clean && yarn lint && yarn build && yarn publish"
     },
     "repository": {
         "type": "git",
