@@ -46,7 +46,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
                     console.log('test error', e)
                 })
                 .finally(() => {
-                    return this.endConversation()
+                    return this.cancel()
                         .then((res) => {
                             console.log('test ends')
                             this._t.end()
