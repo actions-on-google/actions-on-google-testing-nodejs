@@ -1,0 +1,17 @@
+package
+package/dist
+package/dist/actions-on-google-ava.d.ts
+package/dist/actions-on-google-ava.js
+package/dist/actions-on-google-ava.js.map
+package/dist/actions-on-google.d.ts
+package/dist/actions-on-google.js
+package/dist/actions-on-google.js.map
+package/dist/index.d.ts
+package/dist/index.js
+package/dist/index.js.map
+package/generate-credentials.js
+package/LICENSE
+package/package.json
+package/package-lock.json
+package/README.md
+package/typedoc.json

@@ -44,7 +44,7 @@ const action = new ActionsOnGoogleAva(require('./test/test-credentials.json'));
 // Start out with giving a name to this test
 action.startTest('Facts about Google - direct cat path', action => {
     // Return a promise that starts a conversation with your test app
-    return action.startConversation()
+    return action.start()
         .then(({ textToSpeech }) => {
             // Get a response back from your fulfillment.
             // To continue the conversation, you can send
@@ -69,6 +69,17 @@ action.startTest('Facts about Google - direct cat path', action => {
 },
 ```
 12. Run `yarn test`. You should see your test be executed.
+
+## Supported features
+
+This library provides the following features to control your conversation:
+
+* `action.start()` - Start your conversation with your action using "my test app".
+* `action.startWith()` - Start your conversation with your action using the specified action name.
+* `action.send()` - Send some phrase to your action.
+* `action.cancel()` - End your conversation. This library says "cancel".
+* `action.locale` - Set a locale for your conversation.
+* `action.location` - Set an array of a latitude and a longitude.
 
 ## Possible responses
 
@@ -119,13 +130,6 @@ res
       .cells - String[]
       .divider - Boolean
 ```
-
-## Additional features
-
-You can run a few different types of automated test scenarios.
-
-* `action.location = [latitude, longitude];`
-* `action.locale = 'en-US'; // Or any other supported locale`
 
 ## Known Issues
 

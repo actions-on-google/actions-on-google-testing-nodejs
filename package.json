@@ -1,8 +1,8 @@
 {
     "name": "actions-on-google-testing",
     "description": "This is an end-to-end testing library for developers building actions",
-    "version": "0.1.0",
-    "license": "Apache Version 2.0",
+    "version": "0.2.1",
+    "license": "Apache-2.0",
     "author": "Google Inc.",
     "main": "dist/index.js",
     "bin": {
@@ -13,10 +13,17 @@
         "node": ">=6.0.0"
     },
     "scripts": {
-        "clean": "rm -rf dist",
+        "clean": "rm -rf dist docs",
         "lint": "tslint -p .",
         "build": "tsc && cp -r ./locales ./dist",
-        "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/*.test.js"
+        "test": "yarn clean && yarn build && yarn lint && nyc ava --fail-fast dist/test/*.test.js",
+        "test:git": "sh script/git-presubmit-lint.sh",
+        "test:tar": "bash script/package-contents.sh",
+        "test:ci": "yarn test && yarn test:git && yarn test:tar",
+        "docs": "typedoc --options typedoc.json",
+        "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs",
+        "release": "yarn clean && yarn lint && yarn build && yarn publish && yarn release:changelog",
+        "release:changelog": "sh script/changelog.sh"
     },
     "repository": {
         "type": "git",
@@ -58,6 +65,7 @@
         "sinon": "^6.0.0",
         "tslint": "^5.9.1",
         "tslint-eslint-rules": "^5.1.0",
+        "typedoc": "^0.11.1",
         "typescript": "^2.7.2",
         "winston": "2.2.0"
     }

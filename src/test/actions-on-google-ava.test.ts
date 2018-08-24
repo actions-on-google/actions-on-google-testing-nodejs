@@ -88,7 +88,7 @@ test.serial('sends correct request parameters - en-US', t => {
     }
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then(res => {
       t.pass()
       mockResponse.restore()
@@ -123,11 +123,11 @@ test.serial('sends correct request parameters - fr-FR', t => {
     }
   })
 
-  action.setLocale('fr-FR')
-  return action.startConversation('')
+  action.locale = 'fr-FR'
+  return action.start('')
     .then(res => {
       t.pass()
-      action.setLocale('en-US')
+      action.locale = 'en-US'
       mockResponse.restore()
     })
 })
@@ -140,7 +140,7 @@ test.serial('opens and exits action', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       t.deepEqual(res, Sample.NUMBER_GENIE_WELCOME_VALUES)
       mockResponse.restore()
@@ -155,7 +155,7 @@ test.serial('verifies parsing closing response of conversation', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       t.is(res.textToSpeech[0],
         '<speak>OK, I\'m already thinking of a number for next time.</speak>')
@@ -173,7 +173,7 @@ test.serial('verifies parsing textToSpeech, displayText, suggestions', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       t.is(res.textToSpeech[0], 'Hi there!')
       t.is(res.textToSpeech[1], 'I can show you basic cards, lists and carousels as well as ' +
@@ -195,7 +195,7 @@ test.serial('verifies parsing basic cards', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       const basicCard = res.cards![0]
       t.is(basicCard.title, 'Title: this is a title')
@@ -222,7 +222,7 @@ test.serial('verifies parsing a browse carousel', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       const firstItem = res.carousel![0]
       const secondItem = res.carousel![1]
@@ -246,7 +246,7 @@ test.serial('verifies parsing a carousel', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       const firstItem = res.carousel![0]
       t.is(res.carousel!.length, 4)
@@ -275,7 +275,7 @@ test.serial('verifies parsing a list', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       const firstItem = res.list!.items[0]
       t.is(res.list!.items.length, 4)
@@ -305,7 +305,7 @@ test.serial('verifies parsing a media response', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       t.is(res.mediaResponse!.type, 'AUDIO')
       t.is(res.mediaResponse!.name, 'Jazz in Paris')
@@ -326,7 +326,7 @@ test.serial('verifies parsing a linkout suggestion', t => {
     return conversation
   })
 
-  return action.startConversation('')
+  return action.start('')
     .then((res: AssistResponse) => {
       t.is(res.linkOutSuggestion!.url, 'https://assistant.google.com/')
       t.is(res.linkOutSuggestion!.name, 'Suggestion Link')
@@ -342,7 +342,7 @@ test.serial('verifies parsing a table', t => {
     return conversation
   })
 
-  return action!.startConversation('')
+  return action!.start('')
     .then((res: AssistResponse) => {
       t.deepEqual(res.table!.headers, ['header 1', 'header 2', 'header 3'])
       t.deepEqual(res.table!.rows[0].cells, ['row 1 item 1', 'row 1 item 2', 'row 1 item 3'])

@@ -1,14 +1,17 @@
 .nyc_output/
 dist/test/
 examples/
+git-presubmit-linter/
 locales/
 package/
+script/
 src/
 test/
 *.DS_Store
 *.log
 *.tgz
 *credentials.json
+coverage-summary.json
 tslint.json
 tsconfig.json
 CONTRIBUTING.md

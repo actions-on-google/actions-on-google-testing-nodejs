@@ -1,7 +1,10 @@
+.nyc_output/
+dist/
+docs/
+git-presubmit-linter/
 node_modules/
+package/
+coverage-summary.json
 *credentials.json
 package-lock.json
 *.tgz
-.nyc_output/
-dist/
-package/
