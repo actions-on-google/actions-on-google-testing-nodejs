@@ -231,6 +231,15 @@ export interface AssistResponse {
     deviceAction?: string
 }
 
+export interface AdditionalResponse {
+    queryMatchedIntent?: string,
+}
+
+export interface SendResponse {
+    assistResponse: AssistResponse,
+    additionalResponse: AdditionalResponse,
+}
+
 export class ActionsOnGoogle {
     // tslint:disable-next-line
     _client: any
@@ -320,6 +329,13 @@ export class ActionsOnGoogle {
     }
 
     send(input: string): Promise<AssistResponse> {
+        return this.doSend(input)
+            .then((sendResponse: SendResponse) => {
+                return Promise.resolve(sendResponse.assistResponse)
+            })
+    }
+
+    doSend(input: string): Promise<SendResponse> {
         const config = new embeddedAssistantPb.AssistConfig()
         config.setTextQuery(input)
         config.setAudioOutConfig(new embeddedAssistantPb.AudioOutConfig())
@@ -360,6 +376,7 @@ export class ActionsOnGoogle {
                 ssml: [],
                 suggestions: [],
             }
+            const additionalResponse: AdditionalResponse = {}
 
             conversation.on('data', (data: AssistantSdkResponse) => {
                 if (data.dialog_state_out) {
@@ -379,6 +396,12 @@ export class ActionsOnGoogle {
                         debugInfo.expectedInputs ?
                             debugInfo.expectedInputs[0].inputPrompt.richInitialPrompt :
                             debugInfo.finalResponse.richResponse
+                    if (debugInfo.responseMetadata
+                        && debugInfo.responseMetadata.queryMatchInfo
+                        && debugInfo.responseMetadata.queryMatchInfo.intent) {
+                        additionalResponse.queryMatchedIntent =
+                            debugInfo.responseMetadata.queryMatchInfo.intent
+                    }
                     assistResponse.micOpen = !!debugInfo.expectUserResponse
 
                     // Process a carouselSelect or listSelect
@@ -514,7 +537,11 @@ export class ActionsOnGoogle {
             })
             conversation.on('end', () => {
                 // Conversation ended -- return response
-                resolve(assistResponse)
+                const sendResponse: SendResponse = {
+                    assistResponse,
+                    additionalResponse,
+                }
+                resolve(sendResponse)
             })
             conversation.on('error', (error: Error) => {
                 console.error(error)
