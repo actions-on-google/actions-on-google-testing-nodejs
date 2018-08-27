@@ -18,13 +18,29 @@
 
 import test, { GenericCallbackTestContext } from 'ava'
 import * as promiseFinally from 'promise.prototype.finally'
-import { ActionsOnGoogle, SendResponse } from './actions-on-google'
+import {ActionsOnGoogle, SendResponse, UserCredentials} from './actions-on-google'
+import * as fs from 'fs'
+import * as unzip from 'unzip'
+import * as readline from 'readline'
+
+export interface ActionsOnGoogleAvaOptions {
+    actionPackage?: string
+    dialogflowZip?: string
+}
 
 promiseFinally.shim()
 
 export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     _t: GenericCallbackTestContext<any>
+    _options?: ActionsOnGoogleAvaOptions
+    _queryMatchedIntents: Set<string>
+
+    constructor(credentials: UserCredentials, options?: ActionsOnGoogleAvaOptions) {
+        super(credentials)
+        this._options = options
+        this._queryMatchedIntents = new Set<string>()
+    }
 
     // It doesn't matter what type of Promise being returned
     // tslint:disable-next-line
@@ -61,9 +77,70 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         console.log(`> ${input}`)
         return super.doSend(input)
             .then((res: SendResponse) => {
-                const {assistResponse} = res
+                const {assistResponse, additionalResponse} = res
+                if (additionalResponse.queryMatchedIntent) {
+                    this._queryMatchedIntents.add(additionalResponse.queryMatchedIntent)
+                }
                 console.log(assistResponse)
                 return Promise.resolve(assistResponse)
             })
     }
+
+    reportIntentCoverage(): Promise<void> {
+        return new Promise<void>((resolve, reject) => {
+            const dialogflowZip = this.getDialogflowZipPath()
+            if (dialogflowZip) {
+                this.loadIntentsFromDialogflowZip(dialogflowZip)
+                    .then((allIntents: string[]) => {
+                        const matchedCount = allIntents.reduce((a: number, c: string): number => {
+                            return a += this._queryMatchedIntents.has(c) ? 1 : 0
+                        }, 0)
+                        const converage = (matchedCount / allIntents.length * 100).toFixed(2)
+                        const fraction = `${matchedCount}/${allIntents.length}`
+                        console.log(`${converage}% (${fraction}) of intents covered in your tests.`)
+                        resolve()
+                    })
+            } else {
+                resolve()
+            }
+        })
+    }
+
+    private getDialogflowZipPath(): string | undefined {
+        if (this._options) {
+            if (this._options.actionPackage) {
+                return this._options.actionPackage
+            } else if (this._options.dialogflowZip) {
+                return this._options.dialogflowZip
+            }
+        }
+        return undefined
+    }
+
+    private loadIntentsFromDialogflowZip(dialogflowZip: string): Promise<string[]> {
+        return new Promise<string[]>((resolve, reject) => {
+            const intents: string[] = []
+            fs.createReadStream(fs.realpathSync(dialogflowZip))
+                .pipe(unzip.Parse())
+                .on('entry', entry => {
+                    if (entry.path.startsWith('intents/') && !/says_.+\.json/.test(entry.path)) {
+                        const buf: string[] = []
+                        const reader = readline.createInterface({input: entry})
+                        reader.on('line', data => {
+                            buf.push(data)
+                        })
+                        reader.on('close', () => {
+                            const intent = JSON.parse(buf.join('\n'))
+                            intents.push(intent.id)
+                        })
+                    } else {
+                        entry.autodrain()
+                    }
+                })
+                .on('close', () => {
+                    resolve(intents)
+                })
+        })
+    }
+
 }
