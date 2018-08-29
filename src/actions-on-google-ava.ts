@@ -16,7 +16,7 @@
 
 // Implementation of Google Assistant with Ava testing framework wrapping
 
-import test, { GenericCallbackTestContext } from 'ava'
+import test, {CallbackTestContext} from 'ava'
 import * as promiseFinally from 'promise.prototype.finally'
 import {ActionsOnGoogle, SendResponse, UserCredentials} from './actions-on-google'
 import * as fs from 'fs'
@@ -28,11 +28,15 @@ export interface ActionsOnGoogleAvaOptions {
     dialogflowZip?: string
 }
 
+export interface CoverageResult {
+    matchedCount: number
+    allCount: number
+}
+
 promiseFinally.shim()
 
 export class ActionsOnGoogleAva extends ActionsOnGoogle {
-    // tslint:disable-next-line
-    _t: GenericCallbackTestContext<any>
+    _t: CallbackTestContext
     _options?: ActionsOnGoogleAvaOptions
     _queryMatchedIntents: Set<string>
 
@@ -46,7 +50,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
-        test.cb(testName, t => {
+        this._doTest(testName, t => {
             this._t = t
             this._t.plan(1)
             console.log(`** Starting test ${testName} **`)
@@ -72,6 +76,10 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         })
     }
 
+    _doTest(testName: string, callback: (t: CallbackTestContext) => void) {
+        test.cb(testName, callback)
+    }
+
     send(input: string) {
         this._isNewConversation = false
         console.log(`> ${input}`)
@@ -88,16 +96,13 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
 
     reportIntentCoverage(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
-            const dialogflowZip = this.getDialogflowZipPath()
+            const dialogflowZip = this._getDialogflowZipPath()
             if (dialogflowZip) {
-                this.loadIntentsFromDialogflowZip(dialogflowZip)
-                    .then((allIntents: string[]) => {
-                        const matchedCount = allIntents.reduce((a: number, c: string): number => {
-                            return a += this._queryMatchedIntents.has(c) ? 1 : 0
-                        }, 0)
-                        const converage = (matchedCount / allIntents.length * 100).toFixed(2)
-                        const fraction = `${matchedCount}/${allIntents.length}`
-                        console.log(`${converage}% (${fraction}) of intents covered in your tests.`)
+                this._calculateIntentCoverage(dialogflowZip)
+                    .then((result: CoverageResult) => {
+                        const coverage = (result.matchedCount / result.allCount * 100).toFixed(2)
+                        const fraction = `${result.matchedCount}/${result.allCount}`
+                        console.log(`${coverage}% (${fraction}) of intents covered in your tests.`)
                         resolve()
                     })
             } else {
@@ -106,7 +111,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         })
     }
 
-    private getDialogflowZipPath(): string | undefined {
+    _getDialogflowZipPath(): string | undefined {
         if (this._options) {
             if (this._options.actionPackage) {
                 return this._options.actionPackage
@@ -117,7 +122,22 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         return undefined
     }
 
-    private loadIntentsFromDialogflowZip(dialogflowZip: string): Promise<string[]> {
+    _calculateIntentCoverage(dialogflowZip: string): Promise<CoverageResult> {
+        return new Promise<CoverageResult>((resolve, reject) => {
+            this._loadIntentsFromDialogflowZip(dialogflowZip)
+                .then((allIntents: string[]) => {
+                    const matchedCount = allIntents.reduce((a: number, c: string): number => {
+                        return a += this._queryMatchedIntents.has(c) ? 1 : 0
+                    }, 0)
+                    resolve({
+                        matchedCount,
+                        allCount: allIntents.length,
+                    })
+                })
+        })
+    }
+
+    _loadIntentsFromDialogflowZip(dialogflowZip: string): Promise<string[]> {
         return new Promise<string[]>((resolve, reject) => {
             const intents: string[] = []
             fs.createReadStream(fs.realpathSync(dialogflowZip))
@@ -130,8 +150,11 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
                             buf.push(data)
                         })
                         reader.on('close', () => {
-                            const intent = JSON.parse(buf.join('\n'))
-                            intents.push(intent.id)
+                            try {
+                                const intent = JSON.parse(buf.join('\n'))
+                                intents.push(intent.id)
+                            } catch(e) {
+                            }
                         })
                     } else {
                         entry.autodrain()

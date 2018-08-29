@@ -14,12 +14,12 @@
  *
  */
 // Boilerplate for a test
-import { AssistResponse } from '../actions-on-google'
-import { ActionsOnGoogleAva } from '../actions-on-google-ava'
+import { ActionsOnGoogle, AssistResponse } from '../actions-on-google'
 import test from 'ava'
 import * as sinon from 'sinon'
 import * as winston from 'winston'
 import * as Sample from './expected'
+import {getMockConversation} from './test-helpers'
 
 // Default logger
 winston.loggers.add('DEFAULT_LOGGER', {
@@ -34,35 +34,8 @@ winston.loggers.add('DEFAULT_LOGGER', {
 
 const testCredentialsFile = '../../test-credentials.json'
 
-// Mock implementation of gRPC call that allows server response to be mocked
-// tslint:disable-next-line
-const getMockConversation = (data: any) => {
-  // Wrap AoG data into object
-  const dataToSend = {
-    debug_info: {
-      aog_agent_to_assistant_json: JSON.stringify(data),
-    },
-  }
-  let onData: Function, onEnd: Function
-  return {
-    on: (event: string, call: Function) => {
-      if (event === 'data') {
-        onData = call
-      } else if (event === 'end') {
-        onEnd = call
-      }
-    },
-    // tslint:disable-next-line
-    write: (data: any) => { },
-    end() {
-      onData(dataToSend)
-      onEnd()
-    },
-  }
-}
-
 test.serial('sends correct request parameters - en-US', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
 
   mockResponse.callsFake(() => {
@@ -96,7 +69,7 @@ test.serial('sends correct request parameters - en-US', t => {
 })
 
 test.serial('sends correct request parameters - fr-FR', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
 
   mockResponse.callsFake(() => {
@@ -133,7 +106,7 @@ test.serial('sends correct request parameters - fr-FR', t => {
 })
 
 test.serial('opens and exits action', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.NUMBER_GENIE_WELCOME_AOG)
@@ -148,7 +121,7 @@ test.serial('opens and exits action', t => {
 })
 
 test.serial('verifies parsing closing response of conversation', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.NUMBER_GENIE_EXIT)
@@ -166,7 +139,7 @@ test.serial('verifies parsing closing response of conversation', t => {
 })
 
 test.serial('verifies parsing textToSpeech, displayText, suggestions', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_WELCOME)
@@ -188,7 +161,7 @@ test.serial('verifies parsing textToSpeech, displayText, suggestions', t => {
 })
 
 test.serial('verifies parsing basic cards', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_BASIC_CARDS)
@@ -215,7 +188,7 @@ test.serial('verifies parsing basic cards', t => {
 })
 
 test.serial('verifies parsing a browse carousel', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_BROWSE_CAROUSEL)
@@ -239,7 +212,7 @@ test.serial('verifies parsing a browse carousel', t => {
 })
 
 test.serial('verifies parsing a carousel', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_CAROUSEL)
@@ -269,7 +242,7 @@ test.serial('verifies parsing a carousel', t => {
 })
 
 test.serial('verifies parsing a list', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist'); mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_LIST)
     return conversation
@@ -298,7 +271,7 @@ test.serial('verifies parsing a list', t => {
 })
 
 test.serial('verifies parsing a media response', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_MEDIA)
@@ -319,7 +292,7 @@ test.serial('verifies parsing a media response', t => {
 })
 
 test.serial('verifies parsing a linkout suggestion', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_LINKOUT_SUGGESTION)
@@ -335,7 +308,7 @@ test.serial('verifies parsing a linkout suggestion', t => {
 })
 
 test.serial('verifies parsing a table', t => {
-  const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+  const action = new ActionsOnGoogle(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_TABLE)
