@@ -155,6 +155,9 @@ interface ActionResponseItem extends JsonObject {
             icon: {
                 url: string,
             },
+            largeImage: {
+                url: string,
+            },
         }[],
     }
 }
@@ -217,7 +220,8 @@ export interface AssistResponse {
         name: string,
         description: string,
         sourceUrl: string,
-        icon: string,
+        icon?: string,
+        largeImage?: string,
     },
     suggestions: string[],
     linkOutSuggestion?: {
@@ -474,7 +478,10 @@ export class ActionsOnGoogle {
                                 name: i.mediaResponse.mediaObjects[0].name,
                                 description: i.mediaResponse.mediaObjects[0].description,
                                 sourceUrl: i.mediaResponse.mediaObjects[0].contentUrl,
-                                icon: i.mediaResponse.mediaObjects[0].icon.url,
+                                icon: i.mediaResponse.mediaObjects[0].icon
+                                    ? i.mediaResponse.mediaObjects[0].icon.url : undefined,
+                                largeImage: i.mediaResponse.mediaObjects[0].largeImage
+                                    ? i.mediaResponse.mediaObjects[0].largeImage.url : undefined,
                             }
                         } else if (i.tableCard) {
                             assistResponse.table = {

@@ -297,11 +297,11 @@ test.serial('verifies parsing a list', t => {
     })
 })
 
-test.serial('verifies parsing a media response', t => {
+test.serial('verifies parsing a media response with icon', t => {
   const action = new ActionsOnGoogleAva(require(testCredentialsFile))
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
-    const conversation = getMockConversation(Sample.CONVERSATION_MEDIA)
+    const conversation = getMockConversation(Sample.CONVERSATION_MEDIA_WITH_ICON)
     return conversation
   })
 
@@ -314,8 +314,31 @@ test.serial('verifies parsing a media response', t => {
         'http://storage.googleapis.com/automotive-media/Jazz_In_Paris.mp3')
       t.is(res.mediaResponse!.icon,
         'http://storage.googleapis.com/automotive-media/album_art.jpg')
+      t.is(res.mediaResponse!.largeImage, undefined)
       mockResponse.restore()
     })
+})
+
+test.serial('verifies parsing a media response with largeImage', t => {
+    const action = new ActionsOnGoogleAva(require(testCredentialsFile))
+    const mockResponse = sinon.stub(action._client, 'assist')
+    mockResponse.callsFake(() => {
+        const conversation = getMockConversation(Sample.CONVERSATION_MEDIA_WITH_LARGEIMAGE)
+        return conversation
+    })
+
+    return action.start('')
+        .then((res: AssistResponse) => {
+            t.is(res.mediaResponse!.type, 'AUDIO')
+            t.is(res.mediaResponse!.name, 'Jazz in Paris')
+            t.is(res.mediaResponse!.description, 'A funky Jazz tune')
+            t.is(res.mediaResponse!.sourceUrl,
+                'http://storage.googleapis.com/automotive-media/Jazz_In_Paris.mp3')
+            t.is(res.mediaResponse!.icon, undefined)
+            t.is(res.mediaResponse!.largeImage,
+                'http://storage.googleapis.com/automotive-media/album_art.jpg')
+            mockResponse.restore()
+        })
 })
 
 test.serial('verifies parsing a linkout suggestion', t => {
