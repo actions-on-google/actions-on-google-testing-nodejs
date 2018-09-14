@@ -152,11 +152,11 @@ interface ActionResponseItem extends JsonObject {
             name: string,
             description: string,
             contentUrl: string,
-            icon: {
-                url: string,
+            icon?: {
+                url?: string,
             },
-            largeImage: {
-                url: string,
+            largeImage?: {
+                url?: string,
             },
         }[],
     }
@@ -479,9 +479,9 @@ export class ActionsOnGoogle {
                                 description: i.mediaResponse.mediaObjects[0].description,
                                 sourceUrl: i.mediaResponse.mediaObjects[0].contentUrl,
                                 icon: i.mediaResponse.mediaObjects[0].icon
-                                    ? i.mediaResponse.mediaObjects[0].icon.url : undefined,
+                                    ? i.mediaResponse.mediaObjects[0].icon!.url : undefined,
                                 largeImage: i.mediaResponse.mediaObjects[0].largeImage
-                                    ? i.mediaResponse.mediaObjects[0].largeImage.url : undefined,
+                                    ? i.mediaResponse.mediaObjects[0].largeImage!.url : undefined,
                             }
                         } else if (i.tableCard) {
                             assistResponse.table = {
