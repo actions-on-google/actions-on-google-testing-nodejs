@@ -583,7 +583,7 @@ export const CONVERSATION_LIST = {
   },
 }
 
-export const CONVERSATION_MEDIA = {
+export const CONVERSATION_MEDIA_WITH_ICON = {
   conversationToken: '[\"_actions_on_google_\"]',
   expectUserResponse: true,
   expectedInputs: [
@@ -650,6 +650,75 @@ export const CONVERSATION_MEDIA = {
       intent: '88cb82e1-9d72-4d70-bef1-be5b39dff99f',
     },
   },
+}
+
+export const CONVERSATION_MEDIA_WITH_LARGEIMAGE = {
+    conversationToken: '[\"_actions_on_google_\"]',
+    expectUserResponse: true,
+    expectedInputs: [
+        {
+            inputPrompt: {
+                richInitialPrompt: {
+                    items: [
+                        {
+                            simpleResponse: {
+                                textToSpeech: 'This is the first simple response for a media response',
+                            },
+                        },
+                        {
+                            mediaResponse: {
+                                mediaType: 'AUDIO',
+                                mediaObjects: [
+                                    {
+                                        name: 'Jazz in Paris',
+                                        description: 'A funky Jazz tune',
+                                        contentUrl: 'http://storage.googleapis.com/automotive-media/Jazz_In_Paris.mp3',
+                                        largeImage: {
+                                            url: 'http://storage.googleapis.com/automotive-media/album_art.jpg',
+                                        },
+                                    },
+                                ],
+                            },
+                        },
+                    ],
+                    suggestions: [
+                        {
+                            title: 'Basic Card',
+                        },
+                        {
+                            title: 'Browse Carousel',
+                        },
+                        {
+                            title: 'Carousel',
+                        },
+                        {
+                            title: 'List',
+                        },
+                        {
+                            title: 'Media',
+                        },
+                        {
+                            title: 'Suggestions',
+                        },
+                    ],
+                },
+            },
+            possibleIntents: [
+                {
+                    intent: 'assistant.intent.action.TEXT',
+                },
+            ],
+        },
+    ],
+    responseMetadata: {
+        status: {
+            message: 'Success (200)',
+        },
+        queryMatchInfo: {
+            queryMatched: true,
+            intent: '88cb82e1-9d72-4d70-bef1-be5b39dff99f',
+        },
+    },
 }
 
 export const CONVERSATION_LINKOUT_SUGGESTION = {
