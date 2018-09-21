@@ -138,5 +138,54 @@ res
 * Unable to set surface capabilities
 * Selecting an item for a ListSelect and CarouselSelect do not work
 
+## Interactive Prompt
+
+You can use an "Interactive Prompt" to test your actions. This mode allows you to communicate with your actions as
+like the Actions Simulator easily.
+
+If you have already installed this library by the steps described on "How to get started" section, the
+`action-test` command has been installed at the same time. You can use the command right now, if you have
+installed this library for global. Otherwise, you should be able to find the command at `./node_modues/.bin`
+directory.
+
+When you want to test your actions using the command, run the following:
+
+```bash
+$ action-test interactive -l <LOCALE> -c <CREDENTIAL_FILE> "<YOUR_ACTION_NAME>" "<PROMPT>"
+```
+
+* `<YOUR_ACTION_NAME` - The name to invoke your action. If omitted, the default app name for test app is used (ex. "my test app").
+* `<PROMPT>` - The additional prompt you want to pass to your action.
+* `<LOCALE>` - The locale string. If omitted, "en-US" is used. This is case-sensitive, and all supported locales are defined on the [Language and Locale Support](https://developers.google.com/actions/localization/languages-locales) page.
+* `<CREDENTIAL_FILE>` - The file path of your credential file which was created by the previous step. If omitted, "./credentials.json" is used.
+
+All options above can be omitted. If you execute `action-test interactive` without any options, it means the following:
+
+```bash
+action-test interactive -l en-US -c ./credentials.json "my test app"
+```
+
+If your test app can be invoked normally, you can interact with the action as like the following:
+
+```
+Action response:
+{ micOpen: true,
+  textToSpeech: [ 'What's your first guess?' ],
+  displayText: [],
+  ssml: [],
+  suggestions: [] }
+
+> 48
+
+Action response:
+{ micOpen: true,
+  textToSpeech: [ 'higher than 49' ],
+  displayText: [],
+  ssml: [],
+  suggestions: [] }
+
+...
+```
+
 ## License
 See `LICENSE`
