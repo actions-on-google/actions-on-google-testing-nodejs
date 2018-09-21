@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-yarn pack
+TAR=$(yarn pack | grep -Eo "/.*tgz")
 # Let's assume there's only one tar in our directory
-diff <(tar -tf actions-on-google-testing-v*.tgz | sort) script/expected-files.txt
+diff <(tar -tf $TAR | sort) script/expected-files.txt
 if [ $? -ne 0 ]; then
     # Packaged files and expected files not the same
     echo "Identified unexpected files in tar"
