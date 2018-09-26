@@ -12,6 +12,5 @@ package/dist/index.js.map
 package/generate-credentials.js
 package/LICENSE
 package/package.json
-package/package-lock.json
 package/README.md
 package/typedoc.json
