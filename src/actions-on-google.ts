@@ -275,13 +275,30 @@ export class ActionsOnGoogle {
      * @param credentials Credentials for a given user to make authorized requests
      * @public
      */
-    constructor(credentials: UserCredentials) {
+    constructor(credentials?: UserCredentials) {
         this._client = this._createClient(credentials)
         this._locale = DEFAULT_LOCALE
     }
 
     /** @hidden */
-    _createClient(credentials: UserCredentials) {
+    _createClient(credentials?: UserCredentials) {
+        if (!credentials) {
+            if (process.env.ACTIONS_TESTING_CLIENT_ID &&
+                process.env.ACTIONS_TESTING_CLIENT_SECRET &&
+                process.env.ACTIONS_TESTING_REFRESH_TOKEN) {
+                credentials = {
+                    client_id: process.env.ACTIONS_TESTING_CLIENT_ID,
+                    client_secret: process.env.ACTIONS_TESTING_CLIENT_SECRET,
+                    refresh_token: process.env.ACTIONS_TESTING_REFRESH_TOKEN,
+                    type: 'authorized_user',
+                }
+            } else {
+                throw new Error(
+                    'Please provide ACTIONS_TESTING_CLIENT_ID,'
+                    + ' ACTIONS_TESTING_CLIENT_SECRET,'
+                    + ' ACTIONS_TESTING_REFRESH_TOKEN environment variables.')
+            }
+        }
         const sslCreds = grpc.credentials.createSsl()
         const refresh = new UserRefreshClient()
         refresh.fromJSON(credentials)

@@ -39,6 +39,8 @@ similar to the following:
 'use strict';
 const { ActionsOnGoogleAva } = require('actions-on-google-testing');
 const { expect } = require('chai');
+// Library will try to obtain credentials from environment variables in case
+// credentials file is not specified
 const action = new ActionsOnGoogleAva(require('./test/test-credentials.json'));
 
 // Start out with giving a name to this test
@@ -69,6 +71,8 @@ action.startTest('Facts about Google - direct cat path', action => {
 },
 ```
 12. Run `yarn test`. You should see your test be executed.
+
+**NOTE** You can also alternatively set the following environment variables - ```ACTIONS_TESTING_CLIENT_ID```,```ACTIONS_TESTING_CLIENT_SECRET```, ```ACTIONS_TESTING_REFRESH_TOKEN``` - to authenticate your Actions project with the Assistant SDK.
 
 ## Supported features
 
