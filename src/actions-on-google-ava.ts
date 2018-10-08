@@ -34,6 +34,20 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
      *
      * @param testName The display name for the test
      * @param callback The logic for the test
+     *
+     * @example
+     * ```javascript
+     * // Pass in optional user credentials or default to environment variables
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.startTest('test correct answer', action => {
+     *   action.startWith('number genie', 'about 50') // "talk to number genie about 50"
+     *     .then(res => {
+     *       expect(res.textToSpeech[0]).to.be.equal('I am thinking of a number')
+     *     })
+     * })
+     * ```
+     *
+     * @public
      */
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
@@ -65,6 +79,20 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
      *
      * @param input The user-provided query as text
      * @return A Promise with the response from the Action
+     *
+     * @example
+     * ```javascript
+     * // Pass in optional user credentials or default to environment variables
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.startWith('number genie', 'about 50') // "talk to number genie about 50"
+     *   .then(res => {
+     *     return action.send('what about 49?')
+     *   }).then(res => {
+     *     expect(res.textToSpeech[0]).to.be.equal('You are very close')
+     *   })
+     * ```
+     *
+     * @public
      */
     async send(input: string) {
         this._isNewConversation = false

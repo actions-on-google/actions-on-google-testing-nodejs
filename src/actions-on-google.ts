@@ -246,8 +246,22 @@ export class ActionsOnGoogle {
     _isNewConversation = false
     _locale: string
 
+    /**
+     * A representation of coordinates, longitude and latitude
+     *
+     * @example
+     * ```javascript
+     * action.location = [37.39, -122.08] // Mountain View, California
+     * ```
+     *
+     * @public
+     */
     location: number[]
+
+    /** @public */
     deviceModelId = 'default'
+
+    /** @public */
     deviceInstanceId = 'default'
 
     /**
@@ -283,6 +297,14 @@ export class ActionsOnGoogle {
      * The locale of user-initiated requests
      *
      * @param l The locale to use in requests
+     *
+     * @example
+     * ```javascript
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.locale = 'fr-FR'
+     * ```
+     *
+     * @public
      */
     set locale(l: string) {
         if (SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).indexOf(l) === -1) {
@@ -312,6 +334,18 @@ export class ActionsOnGoogle {
      *
      * @param prompt An optional starting prompt to send to the Action as it is invoked
      * @return A Promise with the response from the Action
+     *
+     * @example
+     * ```javascript
+     * // Pass in optional user credentials or default to environment variables
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.start() // "talk to my test app"
+     *   then(res => {
+     *     expect(res.textToSpeech[0]).to.be.equal('Welcome to my test app')
+     *   })
+     * ```
+     *
+     * @public
      */
     start(prompt?: string) {
         return this.startWith(this.i18n_('my_test_app'), prompt)
@@ -330,6 +364,18 @@ export class ActionsOnGoogle {
      * @param action The name of the Action to invoke
      * @param prompt An optional starting prompt to send to the Action as it is invoked
      * @return A Promise with the response from the Action
+     *
+     * @example
+     * ```javascript
+     * // Pass in optional user credentials or default to environment variables
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.startWith('number genie') // "talk to number genie"
+     *   .then(res => {
+     *     expect(res.textToSpeech[0]).to.be.equal('I am thinking of a number')
+     *   })
+     * ```
+     *
+     * @public
      */
     startWith(action: string, prompt?: string) {
         const query = prompt
@@ -349,6 +395,20 @@ export class ActionsOnGoogle {
      * Sends a cancel command to the Action, to end the conversation immediately
      *
      * @return A Promise with the response from the Action
+     *
+     * @example
+     * ```javascript
+     * // Pass in optional user credentials or default to environment variables
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.startWith('number genie') // "talk to number genie"
+     *   .then(res => {
+     *      return action.cancel()
+     *   }).then(res => {
+     *      expect(res.textToSpeech[0]).to.be.equal('See you later')
+     *   })
+     * ```
+     *
+     * @public
      */
     cancel() {
         return this.send(this.i18n_('cancel'))
@@ -359,6 +419,20 @@ export class ActionsOnGoogle {
      *
      * @param input The user-provided query as text
      * @return A Promise with the response from the Action
+     *
+     * @example
+     * ```javascript
+     * // Pass in optional user credentials or default to environment variables
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.startWith('number genie', 'about 50') // "talk to number genie about 50"
+     *   .then(res => {
+     *     return action.send('what about 49?')
+     *   }).then(res => {
+     *     expect(res.textToSpeech[0]).to.be.equal('You are very close')
+     *   })
+     * ```
+     *
+     * @public
      */
     send(input: string): Promise<AssistResponse> {
         const config = new embeddedAssistantPb.AssistConfig()
