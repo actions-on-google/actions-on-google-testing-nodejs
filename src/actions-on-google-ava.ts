@@ -26,6 +26,7 @@ promiseFinally.shim()
  * A class that uses Actions on Google as an Ava test wrapper.
  */
 export class ActionsOnGoogleAva extends ActionsOnGoogle {
+    /** @hidden */
     // tslint:disable-next-line
     _t: GenericCallbackTestContext<any>
 

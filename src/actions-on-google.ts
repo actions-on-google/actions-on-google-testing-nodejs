@@ -239,11 +239,16 @@ export interface AssistResponse {
  * A class to handle requests to the Google Assistant for an Action.
  */
 export class ActionsOnGoogle {
+    /** @hidden */
     // tslint:disable-next-line
     _client: any
+    /** @hidden */
     _conversationState: Uint8Array
+    /** @hidden */
     _endpoint = 'embeddedassistant.googleapis.com'
+    /** @hidden */
     _isNewConversation = false
+    /** @hidden */
     _locale: string
 
     /**
@@ -268,12 +273,14 @@ export class ActionsOnGoogle {
      * Constructs a new ActionsOnGoogle object and initializes a gRPC client
      *
      * @param credentials Credentials for a given user to make authorized requests
+     * @public
      */
     constructor(credentials: UserCredentials) {
         this._client = this._createClient(credentials)
         this._locale = DEFAULT_LOCALE
     }
 
+    /** @hidden */
     _createClient(credentials: UserCredentials) {
         const sslCreds = grpc.credentials.createSsl()
         const refresh = new UserRefreshClient()
@@ -288,6 +295,7 @@ export class ActionsOnGoogle {
 
     /**
      * @deprecated This will be removed in future releases. Use `action.locale` instead.
+     * @hidden
      */
     setLocale(l: string) {
         this.locale = l
@@ -314,6 +322,7 @@ export class ActionsOnGoogle {
         i18n.setLocale(l)
     }
 
+    /** @hidden */
     i18n_(name: string, params?: i18n.Replacements) {
         if (params) {
             return i18n.__(name, params)
@@ -324,6 +333,7 @@ export class ActionsOnGoogle {
 
     /**
      * @deprecated This will be removed at releasing a version 1.
+     * @hidden
      */
     startConversation(prompt?: string) {
         return this.start(prompt)
@@ -353,6 +363,7 @@ export class ActionsOnGoogle {
 
     /**
      * @deprecated This will be removed at releasing a version 1.
+     * @hidden
      */
     startConversationWith(action: string, prompt?: string) {
         return this.startWith(action, prompt)
@@ -386,6 +397,7 @@ export class ActionsOnGoogle {
 
     /**
      * @deprecated This will be removed at releasing a version 1.
+     * @hidden
      */
     endConversation() {
         return this.cancel()
