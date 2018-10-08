@@ -235,6 +235,9 @@ export interface AssistResponse {
     deviceAction?: string
 }
 
+/**
+ * A class to handle requests to the Google Assistant for an Action.
+ */
 export class ActionsOnGoogle {
     // tslint:disable-next-line
     _client: any
@@ -247,6 +250,11 @@ export class ActionsOnGoogle {
     deviceModelId = 'default'
     deviceInstanceId = 'default'
 
+    /**
+     * Constructs a new ActionsOnGoogle object and initializes a gRPC client
+     *
+     * @param credentials Credentials for a given user to make authorized requests
+     */
     constructor(credentials: UserCredentials) {
         this._client = this._createClient(credentials)
         this._locale = DEFAULT_LOCALE
@@ -271,6 +279,11 @@ export class ActionsOnGoogle {
         this.locale = l
     }
 
+    /**
+     * The locale of user-initiated requests
+     *
+     * @param l The locale to use in requests
+     */
     set locale(l: string) {
         if (SUPPORTED_LOCALES.concat(Object.keys(FALLBACK_LOCALES)).indexOf(l) === -1) {
             console.warn(`Warning: Unsupported locale '${l}' in this tool. Ignore.`)
@@ -294,6 +307,12 @@ export class ActionsOnGoogle {
         return this.start(prompt)
     }
 
+    /**
+     * Starts a conversation with "my test app"
+     *
+     * @param prompt An optional starting prompt to send to the Action as it is invoked
+     * @return A Promise with the response from the Action
+     */
     start(prompt?: string) {
         return this.startWith(this.i18n_('my_test_app'), prompt)
     }
@@ -305,6 +324,13 @@ export class ActionsOnGoogle {
         return this.startWith(action, prompt)
     }
 
+    /**
+     * Starts a conversation with the provided Action
+     *
+     * @param action The name of the Action to invoke
+     * @param prompt An optional starting prompt to send to the Action as it is invoked
+     * @return A Promise with the response from the Action
+     */
     startWith(action: string, prompt?: string) {
         const query = prompt
             ? this.i18n_('start_conversation_with_prompt', { app_name: action, prompt })
@@ -319,10 +345,21 @@ export class ActionsOnGoogle {
         return this.cancel()
     }
 
+    /**
+     * Sends a cancel command to the Action, to end the conversation immediately
+     *
+     * @return A Promise with the response from the Action
+     */
     cancel() {
         return this.send(this.i18n_('cancel'))
     }
 
+    /**
+     * Sends a text query to the Action
+     *
+     * @param input The user-provided query as text
+     * @return A Promise with the response from the Action
+     */
     send(input: string): Promise<AssistResponse> {
         const config = new embeddedAssistantPb.AssistConfig()
         config.setTextQuery(input)
