@@ -22,11 +22,19 @@ import { ActionsOnGoogle, AssistResponse } from './actions-on-google'
 
 promiseFinally.shim()
 
+/**
+ * A class that uses Actions on Google as an Ava test wrapper.
+ */
 export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     _t: GenericCallbackTestContext<any>
 
-    // It doesn't matter what type of Promise being returned
+    /**
+     * Initializes a new test
+     *
+     * @param testName The display name for the test
+     * @param callback The logic for the test
+     */
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
@@ -56,6 +64,11 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         })
     }
 
+    /**
+     * Sends a text query to the Action
+     *
+     * @param input The user-provided query as text
+     */
     send(input: string) {
         this._isNewConversation = false
         console.log(`> ${input}`)
