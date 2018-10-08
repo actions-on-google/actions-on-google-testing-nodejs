@@ -38,29 +38,25 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
-        test.cb(testName, t => {
+        test.cb(testName, async t => {
             this._t = t
             this._t.plan(1)
             console.log(`** Starting test ${testName} **`)
-            callback(this)
-                .then(() => {
-                    // The test has completed successfully
-                    // If the test exits early, only the
-                    // `finally` function will be run
-                    console.log('test passes')
-                    this._t.pass()
-                })
-                .catch((e: Error) => {
-                    console.log('test error', e)
-                })
-                .finally(() => {
-                    return this.cancel()
-                        .then((res) => {
-                            console.log('test ends')
-                            this._t.end()
-                            console.log('\n')
-                        })
-                })
+            try {
+              await callback(this)
+              // The test has completed successfully
+              // If the test exits early, only the
+              // `finally` function will be run
+              console.log('test passes')
+              this._t.pass()
+            } catch(e) {
+              console.log('test error', e)
+            } finally {
+              await this.cancel()
+              console.log('test ends')
+              this._t.end()
+              console.log('\n')
+            }
         })
     }
 
@@ -68,14 +64,13 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
      * Sends a text query to the Action
      *
      * @param input The user-provided query as text
+     * @return A Promise with the response from the Action
      */
-    send(input: string) {
+    async send(input: string) {
         this._isNewConversation = false
         console.log(`> ${input}`)
-        return super.send(input)
-            .then((res) => {
-                console.log(res)
-                return res as AssistResponse // cast to maintain consistent shared type
-            })
+        const res = await super.send(input)
+        console.log(res)
+        return res as AssistResponse // cast to maintain consistent shared type
     }
 }
