@@ -53,7 +53,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
-        test.cb(testName, async t => {
+        test(testName, async t => {
             this._t = t
             this._t.plan(1)
             console.log(`** Starting test ${testName} **`)
@@ -69,7 +69,6 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
             } finally {
               await this.cancel()
               console.log('test ends')
-              this._t.end()
               console.log('\n')
             }
         })
