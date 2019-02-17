@@ -509,7 +509,7 @@ export class ActionsOnGoogle {
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
                     if (data.dialog_state_out.supplemental_display_text &&
-                        !assistResponse.displayText) {
+                        !assistResponse.displayText.length) {
                         assistResponse.textToSpeech =
                             [data.dialog_state_out.supplemental_display_text]
                     }
