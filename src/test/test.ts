@@ -23,13 +23,15 @@ import * as Sample from './expected'
 
 // Default logger
 winston.loggers.add('DEFAULT_LOGGER', {
-  console: {
-    level: 'error',
-    colorize: true,
-    label: 'Default logger',
-    json: true,
-    timestamp: true,
-  },
+  format: winston.format.combine(
+    winston.format.label({ label: 'Default logger' }),
+    winston.format.json(),
+    winston.format.colorize(),
+    winston.format.timestamp(),
+  ),
+  transports: [
+    new winston.transports.Console({ level: 'error'}),
+  ],
 })
 
 const testCredentials: UserCredentials = {
