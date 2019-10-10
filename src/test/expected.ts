@@ -861,3 +861,41 @@ export const CONVERSATION_TABLE = {
   },
   userStorage: '{\"data\":{}}',
 }
+
+export const CONVERSATION_SIGN_IN = {
+  conversationToken: '[\"_actions_on_google\"]',
+  expectUserResponse: true,
+  expectedInputs: [
+    {
+      inputPrompt: {
+        richInitialPrompt: {
+          items: [
+            {
+              simpleResponse: {
+                textToSpeech: 'You\'ll need to sign in',
+              },
+            },
+          ],
+        },
+      },
+      possibleIntents: [
+        {
+          intent: 'actions.intent.SIGN_IN',
+          inputValueData: {
+            '@type': 'type.googleapis.com/google.actions.v2.SignInValueSpec',
+          },
+        },
+      ],
+    },
+  ],
+  responseMetadata: {
+    status: {
+      message: 'Success (200)',
+    },
+    queryMatchInfo: {
+      queryMatched: true,
+      intent: '4aca4776-5110-4f19-a76c-d96d7f4d5b18',
+    },
+  },
+  userStorage: '{\data\:{}}',
+}

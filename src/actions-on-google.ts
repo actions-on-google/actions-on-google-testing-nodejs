@@ -233,6 +233,7 @@ export interface AssistResponse {
         rows: AssistResponseTableRow[],
     }
     deviceAction?: string
+    signInIntent?: boolean
 }
 
 /**
@@ -531,6 +532,9 @@ export class ActionsOnGoogle {
                     if (possibleIntents) {
                         const possibleIntent = possibleIntents[0]
                         const inputValueData = possibleIntent.inputValueData
+                        if (possibleIntent.intent === 'actions.intent.SIGN_IN') {
+                            assistResponse.signInIntent = true
+                        }
                         if (inputValueData) {
                             const carouselSelect = inputValueData.carouselSelect
                             const listSelect = inputValueData.listSelect
