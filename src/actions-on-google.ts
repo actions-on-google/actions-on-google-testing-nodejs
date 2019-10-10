@@ -232,6 +232,11 @@ export interface AssistResponse {
         headers: string[],
         rows: AssistResponseTableRow[],
     }
+    newSurface?: {
+        capabilities: string[],
+        context: string,
+        notificationTitle: string,
+    }
     deviceAction?: string
     signInIntent?: boolean
 }
@@ -534,6 +539,9 @@ export class ActionsOnGoogle {
                         const inputValueData = possibleIntent.inputValueData
                         if (possibleIntent.intent === 'actions.intent.SIGN_IN') {
                             assistResponse.signInIntent = true
+                        } else if (possibleIntent.intent === 'actions.intent.NEW_SURFACE') {
+                            const { capabilities, context, notificationTitle } = inputValueData
+                            assistResponse.newSurface = { capabilities, context, notificationTitle }
                         }
                         if (inputValueData) {
                             const carouselSelect = inputValueData.carouselSelect

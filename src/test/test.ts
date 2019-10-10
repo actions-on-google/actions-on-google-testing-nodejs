@@ -380,7 +380,7 @@ test.serial('verifies parsing a table', t => {
     })
 })
 
-test.serial('verifies parsing a sign in request', t => {
+test.serial('verifies parsing a sign in intent', t => {
   const action = new ActionsOnGoogleAva(testCredentials)
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
@@ -391,6 +391,23 @@ test.serial('verifies parsing a sign in request', t => {
   return action!.start('')
     .then((res: AssistResponse) => {
       t.is(res.signInIntent, true)
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies parsing a new surface intent', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.CONVERSATION_NEW_SURFACE)
+    return conversation
+  })
+
+  return action!.start('')
+    .then((res: AssistResponse) => {
+      t.deepEqual(res.newSurface!.capabilities, ['actions.capability.SCREEN_OUTPUT'])
+      t.is(res.newSurface!.context, 'There is more information available.')
+      t.is(res.newSurface!.notificationTitle, 'Transferring to your phone')
       mockResponse.restore()
     })
 })
