@@ -16,7 +16,7 @@
 
 // Implementation of Google Assistant with Ava testing framework wrapping
 
-import test, { GenericCallbackTestContext } from 'ava'
+import test, { ExecutionContext } from 'ava'
 import * as promiseFinally from 'promise.prototype.finally'
 import { ActionsOnGoogle, AssistResponse } from './actions-on-google'
 
@@ -28,7 +28,7 @@ promiseFinally.shim()
 export class ActionsOnGoogleAva extends ActionsOnGoogle {
     /** @hidden */
     // tslint:disable-next-line
-    _t: GenericCallbackTestContext<any>
+    _t: ExecutionContext<any>
 
     /**
      * Initializes a new test

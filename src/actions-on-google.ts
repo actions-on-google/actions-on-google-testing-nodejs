@@ -17,7 +17,7 @@
 // Implementation of API calls to the Google Assistant
 
 const grpc = require('grpc')
-const protoFiles = require('google-proto-files')
+import * as protoFiles from 'google-proto-files'
 import * as path from 'path'
 import { UserRefreshClient } from 'google-auth-library'
 import * as i18n from 'i18n'
@@ -47,7 +47,7 @@ i18n.configure({
     defaultLocale: DEFAULT_LOCALE,
 })
 
-const PROTO_ROOT_DIR = protoFiles('..')
+const PROTO_ROOT_DIR = protoFiles.getProtoPath('..')
 const embeddedAssistantPb = grpc.load({
     root: PROTO_ROOT_DIR,
     file: path.relative(PROTO_ROOT_DIR, protoFiles['embeddedAssistant'].v1alpha2),
