@@ -55,7 +55,6 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
         this._isNewConversation = true
         test(testName, async t => {
             this._t = t
-            this._t.plan(1)
             console.log(`** Starting test ${testName} **`)
             try {
               await callback(this)
@@ -66,6 +65,8 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
               this._t.pass()
             } catch(e) {
               console.log('test error', e)
+              // let ava handle the error
+              throw e
             } finally {
               await this.cancel()
               console.log('test ends')
