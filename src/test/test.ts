@@ -379,3 +379,18 @@ test.serial('verifies parsing a table', t => {
       mockResponse.restore()
     })
 })
+
+test.serial('verifies parsing a sign in request', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.CONVERSATION_SIGN_IN)
+    return conversation
+  })
+
+  return action!.start('')
+    .then((res: AssistResponse) => {
+      t.is(res.signInIntent, true)
+      mockResponse.restore()
+    })
+})
