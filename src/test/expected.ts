@@ -861,3 +861,81 @@ export const CONVERSATION_TABLE = {
   },
   userStorage: '{\"data\":{}}',
 }
+
+export const CONVERSATION_SIGN_IN = {
+  conversationToken: '[\"_actions_on_google\"]',
+  expectUserResponse: true,
+  expectedInputs: [
+    {
+      inputPrompt: {
+        richInitialPrompt: {
+          items: [
+            {
+              simpleResponse: {
+                textToSpeech: 'You\'ll need to sign in',
+              },
+            },
+          ],
+        },
+      },
+      possibleIntents: [
+        {
+          intent: 'actions.intent.SIGN_IN',
+          inputValueData: {
+            '@type': 'type.googleapis.com/google.actions.v2.SignInValueSpec',
+          },
+        },
+      ],
+    },
+  ],
+  responseMetadata: {
+    status: {
+      message: 'Success (200)',
+    },
+    queryMatchInfo: {
+      queryMatched: true,
+      intent: '4aca4776-5110-4f19-a76c-d96d7f4d5b18',
+    },
+  },
+  userStorage: '{\data\:{}}',
+}
+
+export const CONVERSATION_NEW_SURFACE = {
+  conversationToken: '[\"_actions_on_google\"]',
+  expectUserResponse: true,
+  expectedInputs: [
+    {
+      inputPrompt: {
+        richInitialPrompt: {
+          items: [
+            {
+              simpleResponse: {
+                textToSpeech: 'I\u0027m sorry. I\u0027m having trouble connecting to your account. Please try again later.',
+              },
+            },
+          ],
+        },
+      },
+      possibleIntents: [
+        {
+          intent: 'actions.intent.NEW_SURFACE',
+          inputValueData: {
+            '@type': 'type.googleapis.com/google.actions.v2.NewSurfaceValueSpec',
+            capabilities: ['actions.capability.SCREEN_OUTPUT'],
+            context: 'There is more information available.',
+            notificationTitle: 'Transferring to your phone',
+          },
+        },
+      ],
+    },
+  ],
+  responseMetadata: {
+    status: {
+      message: 'Success (200)',
+    },
+    queryMatchInfo: {
+      queryMatched: true,
+      intent: 'a457499e-b810-4aa7-b523-2ac5fa6b7e48',
+    },
+  },
+}

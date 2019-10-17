@@ -47,6 +47,11 @@ i18n.configure({
     defaultLocale: DEFAULT_LOCALE,
 })
 
+const INTENT_NAMES = {
+  NEW_SURFACE: 'actions.intent.NEW_SURFACE',
+  SIGN_IN: 'actions.intent.SIGN_IN',
+}
+
 const PROTO_ROOT_DIR = protoFiles.getProtoPath('..')
 const embeddedAssistantPb = grpc.load({
     root: PROTO_ROOT_DIR,
@@ -232,7 +237,13 @@ export interface AssistResponse {
         headers: string[],
         rows: AssistResponseTableRow[],
     }
+    newSurface?: {
+        capabilities: string[],
+        context: string,
+        notificationTitle: string,
+    }
     deviceAction?: string
+    signInIntent?: boolean
 }
 
 /**
@@ -531,6 +542,12 @@ export class ActionsOnGoogle {
                     if (possibleIntents) {
                         const possibleIntent = possibleIntents[0]
                         const inputValueData = possibleIntent.inputValueData
+                        if (possibleIntent.intent === INTENT_NAMES.SIGN_IN) {
+                            assistResponse.signInIntent = true
+                        } else if (possibleIntent.intent === INTENT_NAMES.NEW_SURFACE) {
+                            const { capabilities, context, notificationTitle } = inputValueData
+                            assistResponse.newSurface = { capabilities, context, notificationTitle }
+                        }
                         if (inputValueData) {
                             const carouselSelect = inputValueData.carouselSelect
                             const listSelect = inputValueData.listSelect
