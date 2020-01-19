@@ -244,6 +244,7 @@ export interface AssistResponse {
     }
     deviceAction?: string
     signInIntent?: boolean
+    audioOut?: Buffer
 }
 
 /**
@@ -515,8 +516,13 @@ export class ActionsOnGoogle {
                 ssml: [],
                 suggestions: [],
             }
+            const audioBuffers: Buffer[] = []
 
             conversation.on('data', (data: AssistantSdkResponse) => {
+                if (data.audio_out && data.audio_out.audio_data) {
+                    audioBuffers.push(data.audio_out.audio_data)
+                }
+
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
                     if (data.dialog_state_out.supplemental_display_text &&
@@ -679,6 +685,10 @@ export class ActionsOnGoogle {
                 }
             })
             conversation.on('end', () => {
+                if (audioBuffers.length > 0) {
+                    assistResponse.audioOut = Buffer.concat(audioBuffers)
+                }
+
                 // Conversation ended -- return response
                 resolve(assistResponse)
             })
