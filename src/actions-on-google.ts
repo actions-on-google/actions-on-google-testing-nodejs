@@ -483,7 +483,7 @@ export class ActionsOnGoogle {
         config.getAudioOutConfig().setEncoding(1)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
-        config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig());
+        config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig())
         config.getScreenOutConfig().setScreenMode('PLAYING')
         config.setDialogStateIn(new embeddedAssistantPb.DialogStateIn())
         config.setDeviceConfig(new embeddedAssistantPb.DeviceConfig())
@@ -686,7 +686,7 @@ export class ActionsOnGoogle {
                         }
                     }
                 }
-                if (data.screen_out && data.screen_out.format === 'HTML' && data.screen_out.data  ) {
+                if (data.screen_out && data.screen_out.format === 'HTML' && data.screen_out.data) {
                     assistResponse.screenOutHtml = data.screen_out.data.toString()
                 }
             })
