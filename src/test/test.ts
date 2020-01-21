@@ -43,13 +43,19 @@ const testCredentials: UserCredentials = {
 
 // Mock implementation of gRPC call that allows server response to be mocked
 // tslint:disable-next-line
-const getMockConversation = (data: any) => {
+const getMockConversation = (data: any, audioOutBuffer?: Buffer, screenOutHtml?: String) => {
   // Wrap AoG data into object
+  const audioOut = audioOutBuffer ? { audio_data: audioOutBuffer } : null
+  const screenOut = screenOutHtml ? { format: 'HTML', data: screenOutHtml } : null
+
   const dataToSend = {
+    audio_out: audioOut,
+    screen_out: screenOut,
     debug_info: {
       aog_agent_to_assistant_json: JSON.stringify(data),
     },
   }
+
   let onData: Function, onEnd: Function
   return {
     on: (event: string, call: Function) => {
@@ -410,6 +416,70 @@ test.serial('verifies parsing a new surface intent', t => {
       t.deepEqual(res.newSurface!.capabilities, ['actions.capability.SCREEN_OUTPUT'])
       t.is(res.newSurface!.context, 'There is more information available.')
       t.is(res.newSurface!.notificationTitle, 'Transferring to your phone')
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies missing audioOut', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  action.includeAudioOut = false
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, Buffer.alloc(0))
+    return conversation
+  })
+
+  return action!.start('')
+    .then((res: AssistResponse) => {
+      t.falsy(res.audioOut)
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies receipt of audioOut', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  action.includeAudioOut = true
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, Buffer.alloc(0))
+    return conversation
+  })
+
+  return action!.start('')
+    .then((res: AssistResponse) => {
+      t.truthy(res.audioOut)
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies missing screenOutHtml', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  action.includeScreenOut = false
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, undefined, 'my html')
+    return conversation
+  })
+
+  return action!.start('')
+    .then((res: AssistResponse) => {
+      t.falsy(res.screenOutHtml)
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies receipt of screenOutHtml', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  action.includeScreenOut = true
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, undefined, 'my html')
+    return conversation
+  })
+
+  return action!.start('')
+    .then((res: AssistResponse) => {
+      t.is(res.screenOutHtml, 'my html')
       mockResponse.restore()
     })
 })

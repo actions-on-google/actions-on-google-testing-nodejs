@@ -282,6 +282,12 @@ export class ActionsOnGoogle {
     /** @public */
     deviceInstanceId = 'default'
 
+    /** @public */
+    includeAudioOut = false
+
+    /** @public */
+    includeScreenOut = false
+
     /**
      * Constructs a new ActionsOnGoogle object and initializes a gRPC client
      *
@@ -483,8 +489,10 @@ export class ActionsOnGoogle {
         config.getAudioOutConfig().setEncoding(1)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
-        config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig())
-        config.getScreenOutConfig().setScreenMode('PLAYING')
+        if (this.includeScreenOut) {
+            config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig())
+            config.getScreenOutConfig().setScreenMode('PLAYING')
+        }
         config.setDialogStateIn(new embeddedAssistantPb.DialogStateIn())
         config.setDeviceConfig(new embeddedAssistantPb.DeviceConfig())
         config.getDialogStateIn().setLanguageCode(this._locale)
@@ -522,7 +530,7 @@ export class ActionsOnGoogle {
             const audioBuffers: Buffer[] = []
 
             conversation.on('data', (data: AssistantSdkResponse) => {
-                if (data.audio_out && data.audio_out.audio_data) {
+                if (this.includeAudioOut && data.audio_out && data.audio_out.audio_data) {
                     audioBuffers.push(data.audio_out.audio_data)
                 }
 
@@ -686,12 +694,13 @@ export class ActionsOnGoogle {
                         }
                     }
                 }
-                if (data.screen_out && data.screen_out.format === 'HTML' && data.screen_out.data) {
+                if (this.includeScreenOut && data.screen_out
+                    && data.screen_out.format === 'HTML' && data.screen_out.data) {
                     assistResponse.screenOutHtml = data.screen_out.data.toString()
                 }
             })
             conversation.on('end', () => {
-                if (audioBuffers.length > 0) {
+                if (this.includeAudioOut && audioBuffers.length > 0) {
                     assistResponse.audioOut = Buffer.concat(audioBuffers)
                 }
 
