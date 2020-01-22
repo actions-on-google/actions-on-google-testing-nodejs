@@ -503,7 +503,7 @@ export class ActionsOnGoogle {
         config.getAudioOutConfig().setEncoding(1)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
-        if (this.include.screenOut) {
+        if (this.include && this.include.screenOut) {
             config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig())
             config.getScreenOutConfig().setScreenMode('PLAYING')
         }
