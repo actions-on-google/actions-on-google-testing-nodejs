@@ -41,6 +41,8 @@ const testCredentials: UserCredentials = {
   type: 'authorized_user',
 }
 
+const HTML_SAMPLE = '<html><body>hello</body></html>'
+
 // Mock implementation of gRPC call that allows server response to be mocked
 // tslint:disable-next-line
 const getMockConversation = (data: any, audioOutBuffer?: Buffer, screenOutHtml?: String) => {
@@ -420,9 +422,8 @@ test.serial('verifies parsing a new surface intent', t => {
     })
 })
 
-test.serial('verifies missing audioOut', t => {
+test.serial('verifies missing audioOut (default setting)', t => {
   const action = new ActionsOnGoogleAva(testCredentials)
-  action.includeAudioOut = false
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, Buffer.alloc(0))
@@ -438,7 +439,7 @@ test.serial('verifies missing audioOut', t => {
 
 test.serial('verifies receipt of audioOut', t => {
   const action = new ActionsOnGoogleAva(testCredentials)
-  action.includeAudioOut = true
+  action.include.audioOut = true
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
     const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, Buffer.alloc(0))
@@ -452,12 +453,11 @@ test.serial('verifies receipt of audioOut', t => {
     })
 })
 
-test.serial('verifies missing screenOutHtml', t => {
+test.serial('verifies missing screenOutHtml (default setting)', t => {
   const action = new ActionsOnGoogleAva(testCredentials)
-  action.includeScreenOut = false
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
-    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, undefined, 'my html')
+    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, undefined, HTML_SAMPLE)
     return conversation
   })
 
@@ -470,16 +470,16 @@ test.serial('verifies missing screenOutHtml', t => {
 
 test.serial('verifies receipt of screenOutHtml', t => {
   const action = new ActionsOnGoogleAva(testCredentials)
-  action.includeScreenOut = true
+  action.include.screenOut = true
   const mockResponse = sinon.stub(action._client, 'assist')
   mockResponse.callsFake(() => {
-    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, undefined, 'my html')
+    const conversation = getMockConversation(Sample.CONVERSATION_WELCOME, undefined, HTML_SAMPLE)
     return conversation
   })
 
   return action!.start('')
     .then((res: AssistResponse) => {
-      t.is(res.screenOutHtml, 'my html')
+      t.is(res.screenOutHtml, HTML_SAMPLE)
       mockResponse.restore()
     })
 })

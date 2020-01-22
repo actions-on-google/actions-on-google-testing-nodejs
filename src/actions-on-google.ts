@@ -282,11 +282,25 @@ export class ActionsOnGoogle {
     /** @public */
     deviceInstanceId = 'default'
 
-    /** @public */
-    includeAudioOut = false
-
-    /** @public */
-    includeScreenOut = false
+    /**
+     * Flags to include/exclude certain response data
+     * audioOut - include/exclude response audio buffer (if available)
+     * screenOut - include/exclude response screen output (HTML) (if available)
+     *
+     * @example
+     * ```javascript
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.include.audioOut = true;
+     * action.include.screenOut = true;
+     * action.include = { audioOut: true, screenOut = false };
+     * ```
+     *
+     * @public
+     */
+    include = {
+        audioOut: false,
+        screenOut: false,
+    }
 
     /**
      * Constructs a new ActionsOnGoogle object and initializes a gRPC client
@@ -489,7 +503,7 @@ export class ActionsOnGoogle {
         config.getAudioOutConfig().setEncoding(1)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
-        if (this.includeScreenOut) {
+        if (this.include.screenOut) {
             config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig())
             config.getScreenOutConfig().setScreenMode('PLAYING')
         }
@@ -530,7 +544,8 @@ export class ActionsOnGoogle {
             const audioBuffers: Buffer[] = []
 
             conversation.on('data', (data: AssistantSdkResponse) => {
-                if (this.includeAudioOut && data.audio_out && data.audio_out.audio_data) {
+                if (this.include && this.include.audioOut &&
+                    data.audio_out && data.audio_out.audio_data) {
                     audioBuffers.push(data.audio_out.audio_data)
                 }
 
@@ -694,13 +709,13 @@ export class ActionsOnGoogle {
                         }
                     }
                 }
-                if (this.includeScreenOut && data.screen_out
+                if (this.include && this.include.screenOut && data.screen_out
                     && data.screen_out.format === 'HTML' && data.screen_out.data) {
                     assistResponse.screenOutHtml = data.screen_out.data.toString()
                 }
             })
             conversation.on('end', () => {
-                if (this.includeAudioOut && audioBuffers.length > 0) {
+                if (this.include && this.include.audioOut && audioBuffers.length > 0) {
                     assistResponse.audioOut = Buffer.concat(audioBuffers)
                 }
 
