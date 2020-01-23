@@ -40,6 +40,8 @@ const FALLBACK_LOCALES = {
 
 const DEFAULT_LOCALE = SUPPORTED_LOCALES[0]
 
+const SCREENOUT_FORMAT_HTML = 'HTML'
+
 i18n.configure({
     locales: SUPPORTED_LOCALES,
     fallbacks: FALLBACK_LOCALES,
@@ -552,9 +554,9 @@ export class ActionsOnGoogle {
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
                     if (data.dialog_state_out.supplemental_display_text &&
-                        (!assistResponse.displayText.length &&
-                            !assistResponse.textToSpeech.length &&
-                            !assistResponse.ssml.length)) {
+                        !assistResponse.displayText.length &&
+                        !assistResponse.textToSpeech.length &&
+                        !assistResponse.ssml.length) {
                         assistResponse.textToSpeech =
                             [data.dialog_state_out.supplemental_display_text]
                     }
@@ -710,7 +712,7 @@ export class ActionsOnGoogle {
                     }
                 }
                 if (this.include && this.include.screenOut && data.screen_out
-                    && data.screen_out.format === 'HTML' && data.screen_out.data) {
+                    && data.screen_out.format === SCREENOUT_FORMAT_HTML && data.screen_out.data) {
                     assistResponse.screenOutHtml = data.screen_out.data.toString()
                 }
             })
