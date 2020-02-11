@@ -40,6 +40,8 @@ const FALLBACK_LOCALES = {
 
 const DEFAULT_LOCALE = SUPPORTED_LOCALES[0]
 
+const SCREENOUT_FORMAT_HTML = 'HTML'
+
 i18n.configure({
     locales: SUPPORTED_LOCALES,
     fallbacks: FALLBACK_LOCALES,
@@ -244,6 +246,8 @@ export interface AssistResponse {
     }
     deviceAction?: string
     signInIntent?: boolean
+    audioOut?: Buffer
+    screenOutHtml?: string
 }
 
 /**
@@ -279,6 +283,26 @@ export class ActionsOnGoogle {
 
     /** @public */
     deviceInstanceId = 'default'
+
+    /**
+     * Flags to include/exclude certain response data
+     * audioOut - include/exclude response audio buffer (if available)
+     * screenOut - include/exclude response screen output (HTML) (if available)
+     *
+     * @example
+     * ```javascript
+     * const action = new ActionsOnGoogleAva(CREDENTIALS);
+     * action.include.audioOut = true;
+     * action.include.screenOut = true;
+     * action.include = { audioOut: true, screenOut = false };
+     * ```
+     *
+     * @public
+     */
+    include = {
+        audioOut: false,
+        screenOut: false,
+    }
 
     /**
      * Constructs a new ActionsOnGoogle object and initializes a gRPC client
@@ -481,6 +505,10 @@ export class ActionsOnGoogle {
         config.getAudioOutConfig().setEncoding(1)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
+        if (this.include && this.include.screenOut) {
+            config.setScreenOutConfig(new embeddedAssistantPb.ScreenOutConfig())
+            config.getScreenOutConfig().setScreenMode('PLAYING')
+        }
         config.setDialogStateIn(new embeddedAssistantPb.DialogStateIn())
         config.setDeviceConfig(new embeddedAssistantPb.DeviceConfig())
         config.getDialogStateIn().setLanguageCode(this._locale)
@@ -515,12 +543,20 @@ export class ActionsOnGoogle {
                 ssml: [],
                 suggestions: [],
             }
+            const audioBuffers: Buffer[] = []
 
             conversation.on('data', (data: AssistantSdkResponse) => {
+                if (this.include && this.include.audioOut &&
+                    data.audio_out && data.audio_out.audio_data) {
+                    audioBuffers.push(data.audio_out.audio_data)
+                }
+
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
                     if (data.dialog_state_out.supplemental_display_text &&
-                        !assistResponse.displayText.length) {
+                        !assistResponse.displayText.length &&
+                        !assistResponse.textToSpeech.length &&
+                        !assistResponse.ssml.length) {
                         assistResponse.textToSpeech =
                             [data.dialog_state_out.supplemental_display_text]
                     }
@@ -675,8 +711,16 @@ export class ActionsOnGoogle {
                         }
                     }
                 }
+                if (this.include && this.include.screenOut && data.screen_out
+                    && data.screen_out.format === SCREENOUT_FORMAT_HTML && data.screen_out.data) {
+                    assistResponse.screenOutHtml = data.screen_out.data.toString()
+                }
             })
             conversation.on('end', () => {
+                if (this.include && this.include.audioOut && audioBuffers.length > 0) {
+                    assistResponse.audioOut = Buffer.concat(audioBuffers)
+                }
+
                 // Conversation ended -- return response
                 resolve(assistResponse)
             })
