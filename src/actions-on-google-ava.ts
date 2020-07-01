@@ -53,6 +53,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
+        this._micHasClosed = false
         test(testName, async t => {
             this._t = t
             console.log(`** Starting test ${testName} **`)
