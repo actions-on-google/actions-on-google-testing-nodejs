@@ -84,10 +84,15 @@ interface JsonObject {
     [key: string]: any
 }
 
+enum MicrophoneMode {
+  MICROPHONE_MODE_UNSPECIFIED, CLOSE_MICROPHONE, DIALOG_FOLLOW_ON,
+}
+
 interface AssistantSdkResponse extends JsonObject {
     dialog_state_out?: {
         conversation_state: Uint8Array,
         supplemental_display_text: string,
+        microphone_mode: MicrophoneMode,
     },
     device_action?: {
         device_request_json: string,
@@ -265,6 +270,8 @@ export class ActionsOnGoogle {
     _isNewConversation = false
     /** @hidden */
     _locale: string
+    /** @hidden */
+    _micHasClosed = false
 
     /**
      * A representation of coordinates, longitude and latitude
@@ -553,6 +560,13 @@ export class ActionsOnGoogle {
 
                 if (data.dialog_state_out) {
                     this._conversationState = data.dialog_state_out.conversation_state
+                    const micMode = data.dialog_state_out.microphone_mode
+                    if (micMode === MicrophoneMode.DIALOG_FOLLOW_ON) {
+                      assistResponse.micOpen = true
+                    } else if (micMode === MicrophoneMode.CLOSE_MICROPHONE) {
+                      assistResponse.micOpen = false
+                      this._micHasClosed = true
+                    }
                     if (data.dialog_state_out.supplemental_display_text &&
                         !assistResponse.displayText.length &&
                         !assistResponse.textToSpeech.length &&

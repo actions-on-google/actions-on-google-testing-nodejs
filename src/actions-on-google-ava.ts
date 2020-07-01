@@ -68,7 +68,9 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
               // let ava handle the error
               throw e
             } finally {
-              await this.cancel()
+              if (!this._micHasClosed){
+                await this.cancel()
+              }
               console.log('test ends')
               console.log('\n')
             }
