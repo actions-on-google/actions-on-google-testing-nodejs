@@ -21,7 +21,7 @@
         "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs",
         "release": "yarn clean && yarn lint && yarn build && yarn publish && yarn release:changelog",
         "release:changelog": "sh script/changelog.sh",
-        "postinstall": "yarn build"
+        "postinstall": "tsc -p ./tsconfig.json && cp -r ./locales ./dist"
     },
     "repository": {
         "type": "git",
