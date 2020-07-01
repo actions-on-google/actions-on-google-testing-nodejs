@@ -85,9 +85,9 @@ interface JsonObject {
 }
 
 enum MicrophoneMode {
-  MICROPHONE_MODE_UNSPECIFIED = "MICROPHONE_MODE_UNSPECIFIED",
-  CLOSE_MICROPHONE = "CLOSE_MICROPHONE",
-  DIALOG_FOLLOW_ON = "DIALOG_FOLLOW_ON",
+  MICROPHONE_MODE_UNSPECIFIED = 'MICROPHONE_MODE_UNSPECIFIED',
+  CLOSE_MICROPHONE = 'CLOSE_MICROPHONE',
+  DIALOG_FOLLOW_ON = 'DIALOG_FOLLOW_ON',
 }
 
 interface AssistantSdkResponse extends JsonObject {
@@ -265,6 +265,7 @@ export class ActionsOnGoogle {
     // tslint:disable-next-line
     _client: any
     /** @hidden reference to ava test to allow logging */
+    // tslint:disable-next-line
     _t: any
     /** @hidden */
     _conversationState: Uint8Array
