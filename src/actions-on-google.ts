@@ -553,7 +553,6 @@ export class ActionsOnGoogle {
                 displayText: [],
                 ssml: [],
                 suggestions: [],
-                newSurface: undefined,
             }
             const audioBuffers: Buffer[] = []
 
