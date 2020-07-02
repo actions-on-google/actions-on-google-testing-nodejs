@@ -108,6 +108,11 @@ export const NUMBER_GENIE_WELCOME_VALUES = {
   suggestions: ['37', '10', '78', '34'],
 }
 
+export const NUMBER_GENIE_WELCOME_WITHOUT_DEBUG_INFO = {
+  supplemental_display_text: 'Hi! I\'m thinking of a number from 0 to 100.\nWhat\'s your first guess?',
+  microphone_mode: 'DIALOG_FOLLOW_ON',
+}
+
 export const NUMBER_GENIE_EXIT = {
   conversationToken: '[\"_actions_on_google\",\"game\",\"yes_no\"]',
   finalResponse: {
@@ -132,6 +137,11 @@ export const NUMBER_GENIE_EXIT = {
     },
   },
   userStorage: '{\"data\":{}}',
+}
+
+export const NUMBER_GENIE_EXIT_WITHOUT_DEBUG_INFO = {
+  supplemental_display_text: 'OK, I\'m already thinking of a number for next time.',
+  microphone_mode: 'CLOSE_MICROPHONE',
 }
 
 export const CONVERSATION_WELCOME = {

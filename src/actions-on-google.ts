@@ -84,10 +84,17 @@ interface JsonObject {
     [key: string]: any
 }
 
+enum MicrophoneMode {
+  MICROPHONE_MODE_UNSPECIFIED = 'MICROPHONE_MODE_UNSPECIFIED',
+  CLOSE_MICROPHONE = 'CLOSE_MICROPHONE',
+  DIALOG_FOLLOW_ON = 'DIALOG_FOLLOW_ON',
+}
+
 interface AssistantSdkResponse extends JsonObject {
     dialog_state_out?: {
         conversation_state: Uint8Array,
         supplemental_display_text: string,
+        microphone_mode: string,
     },
     device_action?: {
         device_request_json: string,
@@ -257,6 +264,9 @@ export class ActionsOnGoogle {
     /** @hidden */
     // tslint:disable-next-line
     _client: any
+    /** @hidden reference to ava test to allow logging */
+    // tslint:disable-next-line
+    _t: any
     /** @hidden */
     _conversationState: Uint8Array
     /** @hidden */
@@ -265,6 +275,8 @@ export class ActionsOnGoogle {
     _isNewConversation = false
     /** @hidden */
     _locale: string
+    /** @hidden */
+    _micHasClosed = false
 
     /**
      * A representation of coordinates, longitude and latitude
@@ -537,7 +549,7 @@ export class ActionsOnGoogle {
         const conversation = this._client.assist()
         return new Promise((resolve, reject) => {
             const assistResponse: AssistResponse = {
-                micOpen: false,
+                micOpen: true,
                 textToSpeech: [],
                 displayText: [],
                 ssml: [],
@@ -559,6 +571,13 @@ export class ActionsOnGoogle {
                         !assistResponse.ssml.length) {
                         assistResponse.textToSpeech =
                             [data.dialog_state_out.supplemental_display_text]
+                    }
+                    const micMode = data.dialog_state_out.microphone_mode as MicrophoneMode
+                    if (micMode === MicrophoneMode.DIALOG_FOLLOW_ON) {
+                        assistResponse.micOpen = true
+                    } else if (micMode === MicrophoneMode.CLOSE_MICROPHONE) {
+                        assistResponse.micOpen = false
+                        this._micHasClosed = true
                     }
                 }
                 if (data.device_action) {
