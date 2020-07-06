@@ -7,7 +7,7 @@
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "engines": {
-        "node": ">=8.9.4"
+        "node": ">=10.13.0"
     },
     "scripts": {
         "clean": "rm -rf dist docs",
@@ -19,6 +19,7 @@
         "test:ci": "yarn test && yarn test:git && yarn test:tar",
         "docs": "typedoc --options typedoc.json",
         "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs",
+        "prepare": "yarn build",
         "release": "yarn clean && yarn lint && yarn build && yarn publish && yarn release:changelog",
         "release:changelog": "sh script/changelog.sh"
     },
