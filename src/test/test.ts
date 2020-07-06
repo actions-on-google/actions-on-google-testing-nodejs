@@ -43,21 +43,8 @@ const testCredentials: UserCredentials = {
 
 const HTML_SAMPLE = '<html><body>hello</body></html>'
 
-// Mock implementation of gRPC call that allows server response to be mocked
 // tslint:disable-next-line
-const getMockConversation = (data: any, audioOutBuffer?: Buffer, screenOutHtml?: String) => {
-  // Wrap AoG data into object
-  const audioOut = audioOutBuffer ? { audio_data: audioOutBuffer } : null
-  const screenOut = screenOutHtml ? { format: 'HTML', data: screenOutHtml } : null
-
-  const dataToSend = {
-    audio_out: audioOut,
-    screen_out: screenOut,
-    debug_info: {
-      aog_agent_to_assistant_json: JSON.stringify(data),
-    },
-  }
-
+const _wrapMockConversationData = (dataToSend: any) => {
   let onData: Function, onEnd: Function
   return {
     on: (event: string, call: Function) => {
@@ -74,6 +61,34 @@ const getMockConversation = (data: any, audioOutBuffer?: Buffer, screenOutHtml?:
       onEnd()
     },
   }
+}
+
+// Mock implementation of gRPC call that allows server response to be mocked
+// tslint:disable-next-line
+const getMockConversation = (data: any, audioOutBuffer?: Buffer, screenOutHtml?: String) => {
+  // Wrap AoG data into object
+  const audioOut = audioOutBuffer ? { audio_data: audioOutBuffer } : null
+  const screenOut = screenOutHtml ? { format: 'HTML', data: screenOutHtml } : null
+
+  const dataToSend = {
+    audio_out: audioOut,
+    screen_out: screenOut,
+    debug_info: {
+      aog_agent_to_assistant_json: JSON.stringify(data),
+    },
+  }
+
+  return _wrapMockConversationData(dataToSend)
+}
+
+// Mock implementation of gRPC call that allows server response to be mocked
+// tslint:disable-next-line
+const getMockConversationWithoutDebugInfo = (dialogState: any) => {
+  const dataToSend = {
+    dialog_state_out: dialogState,
+  }
+
+  return _wrapMockConversationData(dataToSend)
 }
 
 test.serial('sends correct request parameters - en-US', t => {
@@ -162,6 +177,24 @@ test.serial('opens and exits action', t => {
     })
 })
 
+test.serial('opens action without debug_info', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation =
+      getMockConversationWithoutDebugInfo(Sample.NUMBER_GENIE_WELCOME_WITHOUT_DEBUG_INFO)
+    return conversation
+  })
+
+  return action.start('')
+    .then((res: AssistResponse) => {
+      t.is(res.textToSpeech[0],
+        'Hi! I\'m thinking of a number from 0 to 100.\nWhat\'s your first guess?')
+      t.is(res.micOpen, true)
+      mockResponse.restore()
+    })
+})
+
 test.serial('verifies parsing closing response of conversation', t => {
   const action = new ActionsOnGoogleAva(testCredentials)
   const mockResponse = sinon.stub(action._client, 'assist')
@@ -175,6 +208,23 @@ test.serial('verifies parsing closing response of conversation', t => {
       t.is(res.textToSpeech[0],
         '<speak>OK, I\'m already thinking of a number for next time.</speak>')
       t.is(res.displayText[0], 'OK, I\'m already thinking of a number for next time.')
+      t.is(res.micOpen, false)
+      mockResponse.restore()
+    })
+})
+
+test.serial('verifies parsing closing response of conversation without debug_info', t => {
+  const action = new ActionsOnGoogleAva(testCredentials)
+  const mockResponse = sinon.stub(action._client, 'assist')
+  mockResponse.callsFake(() => {
+    const conversation =
+      getMockConversationWithoutDebugInfo(Sample.NUMBER_GENIE_EXIT_WITHOUT_DEBUG_INFO)
+    return conversation
+  })
+
+  return action.start('')
+    .then((res: AssistResponse) => {
+      t.is(res.textToSpeech[0], 'OK, I\'m already thinking of a number for next time.')
       t.is(res.micOpen, false)
       mockResponse.restore()
     })

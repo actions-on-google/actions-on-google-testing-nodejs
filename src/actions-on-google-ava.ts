@@ -53,6 +53,7 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
     // tslint:disable-next-line
     startTest(testName: string, callback: (t: ActionsOnGoogleAva) => Promise<any>) {
         this._isNewConversation = true
+        this._micHasClosed = false
         test(testName, async t => {
             this._t = t
             console.log(`** Starting test ${testName} **`)
@@ -68,7 +69,9 @@ export class ActionsOnGoogleAva extends ActionsOnGoogle {
               // let ava handle the error
               throw e
             } finally {
-              await this.cancel()
+              if (!this._micHasClosed){
+                await this.cancel()
+              }
               console.log('test ends')
               console.log('\n')
             }
