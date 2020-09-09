@@ -90,6 +90,12 @@ enum MicrophoneMode {
   DIALOG_FOLLOW_ON = 'DIALOG_FOLLOW_ON',
 }
 
+export const AUDIO_OUT_ENCODINGS = {
+  LINEAR16: 1,
+  MP3: 2,
+  OPUS_IN_OGG: 3
+}
+
 interface AssistantSdkResponse extends JsonObject {
     dialog_state_out?: {
         conversation_state: Uint8Array,
@@ -317,6 +323,12 @@ export class ActionsOnGoogle {
     }
 
     /**
+     * Audio encoding of response audio buffer (only used if include.audioOut is enabled)
+     * @public
+     */
+    audioOutEncoding = AUDIO_OUT_ENCODINGS.LINEAR16
+
+    /**
      * Constructs a new ActionsOnGoogle object and initializes a gRPC client
      *
      * @param credentials Credentials for a given user to make authorized requests
@@ -514,7 +526,7 @@ export class ActionsOnGoogle {
         const config = new embeddedAssistantPb.AssistConfig()
         config.setTextQuery(input)
         config.setAudioOutConfig(new embeddedAssistantPb.AudioOutConfig())
-        config.getAudioOutConfig().setEncoding(2)
+        config.getAudioOutConfig().setEncoding(this.audioOutEncoding)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
         if (this.include && this.include.screenOut) {
