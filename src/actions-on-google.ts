@@ -514,7 +514,7 @@ export class ActionsOnGoogle {
         const config = new embeddedAssistantPb.AssistConfig()
         config.setTextQuery(input)
         config.setAudioOutConfig(new embeddedAssistantPb.AudioOutConfig())
-        config.getAudioOutConfig().setEncoding(1)
+        config.getAudioOutConfig().setEncoding(2)
         config.getAudioOutConfig().setSampleRateHertz(16000)
         config.getAudioOutConfig().setVolumePercentage(100)
         if (this.include && this.include.screenOut) {
