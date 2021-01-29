@@ -93,7 +93,7 @@ enum MicrophoneMode {
 export const AUDIO_OUT_ENCODINGS = {
   LINEAR16: 1,
   MP3: 2,
-  OPUS_IN_OGG: 3
+  OPUS_IN_OGG: 3,
 }
 
 interface AssistantSdkResponse extends JsonObject {
