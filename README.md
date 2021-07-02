@@ -1,7 +1,10 @@
 # Actions on Google Testing Library
+
 This library allows developers to write automated testing for their actions in Node.js.
 
 [![NPM Version](https://img.shields.io/npm/v/actions-on-google-testing.svg)](https://www.npmjs.org/package/actions-on-google-testing)
+
+:warning: This library supports Dialogflow and the legacy Actions SDK. We now recommend using [Actions Builder or the new Actions SDK](https://developers.google.com/assistant/conversational/overview) to develop, test, and deploy Conversational Actions. For testing [Conversational Actions](https://developers.google.com/assistant/conversational/actions) built using [Actions Builder](https://developers.google.com/assistant/console/builder) see the [@assistant/conversation-testing](https://github.com/actions-on-google/assistant-conversation-testing-nodejs) library.
 
 Examples can be found in the `/examples` directory for two sample apps.
 
