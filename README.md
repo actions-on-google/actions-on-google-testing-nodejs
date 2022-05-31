@@ -1,5 +1,8 @@
 # Actions on Google Testing Library
 
+*:warning: Warning: Conversational Actions will be deprecated on June 13, 2023. For more information, see [Conversational Actions Sunset](https://goo.gle/ca-sunset).*
+
+
 This library allows developers to write automated testing for their actions in Node.js.
 
 [![NPM Version](https://img.shields.io/npm/v/actions-on-google-testing.svg)](https://www.npmjs.org/package/actions-on-google-testing)
