@@ -1,5 +1,5 @@
 {
-    "name": "actions-on-google-testing",
+    "name": "botium-actions-on-google-testing",
     "description": "This is an end-to-end testing library for developers building actions",
     "version": "0.4.0",
     "license": "Apache-2.0",
@@ -19,7 +19,7 @@
         "test:ci": "yarn test && yarn test:git && yarn test:tar",
         "docs": "typedoc --options typedoc.json",
         "docs:clean": "rm -rf docs && mkdir docs && touch docs/.nojekyll && yarn docs",
-        "prepare": "yarn build",
+        "prepare": "tsc && cp -r ./locales ./dist",
         "release": "yarn clean && yarn lint && yarn build && yarn publish && yarn release:changelog",
         "release:changelog": "sh script/changelog.sh"
     },
@@ -46,7 +46,7 @@
         "google-proto-files": "^1.1.0",
         "google-protobuf": "^3.10.0",
         "googleapis": "^44.0.0",
-        "grpc": "^1.24.0",
+        "grpc": "^1.24.4",
         "i18n": "^0.8.3",
         "promise.prototype.finally": "^3.1.1"
     },
